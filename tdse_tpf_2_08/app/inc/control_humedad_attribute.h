@@ -1,0 +1,39 @@
+#ifndef CONTROL_INC_CONTROL_HUMEDAD_ATTRIBUTE_H_
+#define CONTROL_INC_CONTROL_HUMEDAD_ATTRIBUTE_H_
+
+/********************** CPP guard ********************************************/
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/********************** inclusions *******************************************/
+
+/********************** macros ***********************************************/
+
+/********************** typedef **********************************************/
+
+typedef enum control_humedad_ev {IDLE_HUM/*COMPLETAR CON EVENTOS*/} control_humedad_ev_t;
+
+typedef enum control_humedad_st {NADA_HUM/*COMPLETAR CON ESTADOS*/} control_humedad_st_t;
+
+typedef struct
+{
+	uint32_t			tick;
+	control_humedad_st_t	state;
+	control_humedad_ev_t	event;
+	bool				flag;
+} control_humedad_dta_t;
+
+/********************** external data declaration ****************************/
+extern control_humedad_dta_t control_humedad_dta;
+
+/********************** external functions declaration ***********************/
+
+/********************** End of CPP guard *************************************/
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* TASK_INC_TASK_SYSTEM_ATTRIBUTE_H_ */
+
+/********************** end of file ******************************************/

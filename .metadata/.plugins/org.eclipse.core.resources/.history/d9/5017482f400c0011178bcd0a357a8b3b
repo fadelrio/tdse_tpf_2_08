@@ -1,0 +1,43 @@
+/********************** inclusions *******************************************/
+#include "control_temperatura_interface.h"
+#include "control_temperatura_attribute.h"
+/********************** macros ***********************************************/
+
+#define G_TASK_SYS_CNT_INI			0ul
+#define G_TASK_SYS_TICK_CNT_INI		0ul
+
+#define DEL_SYS_MIN					0ul
+#define DEL_SYS_MED					50ul
+#define DEL_SYS_MAX					500ul
+/********************** typedef **********************************************/
+
+control_temperatura_dta_t control_temperatura_dta = {DEL_SYS_MIN, NADA, IDLE, false};
+
+void init_control_temperatura_statechart(){
+
+	init_queue_event_control_temperatura();
+
+}
+
+void update_control_temperatura_statechart(){
+
+	control_temperatura_dta_t *p_control_temperatura_dta;
+
+	/* Update Task System Data Pointer */
+	p_control_temperatura_dta = &control_temperatura_dta;
+
+
+	if (true == any_event_control_temperatura())
+	{
+		p_control_temperatura_dta->flag = true;
+		p_control_temperatura_dta->event = get_event_control_temperatura();
+	}
+
+	switch (p_control_temperatura_dta->state)
+	{
+		case NADA:
+			//completar con los casos que haga falta
+			break;
+	}
+
+}

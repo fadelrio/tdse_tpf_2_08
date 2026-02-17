@@ -1,0 +1,17 @@
+19:00:39 **** Incremental Build of configuration Debug for project tdse_tpf_2_08 ****
+make -j16 all 
+arm-none-eabi-gcc "../app/src/task_system.c" -mcpu=cortex-m3 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F103xB -c -I../Core/Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I../Drivers/CMSIS/Include -I../app/inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"app/src/task_system.d" -MT"app/src/task_system.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "app/src/task_system.o"
+arm-none-eabi-gcc -o "tdse_tpf_2_08.elf" @"objects.list"  -lrdimon -mcpu=cortex-m3 -T"C:\Users\frand\Documents\tdse_tpf_2_08\tdse_tpf_2_08\STM32F103RBTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="tdse_tpf_2_08.map" -Wl,--gc-sections -static -specs=rdimon.specs --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: tdse_tpf_2_08.elf
+ 
+arm-none-eabi-size  tdse_tpf_2_08.elf 
+arm-none-eabi-objdump -h -S tdse_tpf_2_08.elf  > "tdse_tpf_2_08.list"
+   text	   data	    bss	    dec	    hex	filename
+  20056	    152	   2520	  22728	   58c8	tdse_tpf_2_08.elf
+Finished building: default.size.stdout
+ 
+Finished building: tdse_tpf_2_08.list
+ 
+
+19:00:39 Build Finished. 0 errors, 0 warnings. (took 807ms)
+

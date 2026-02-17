@@ -1,0 +1,48 @@
+/********************** inclusions *******************************************/
+
+#include "main.h"
+#include "logger.h"
+#include "dwt.h"
+
+#include "control_humedad_attribute.h"
+#include "control_humedad_interface.h"
+/********************** macros ***********************************************/
+
+#define G_TASK_SYS_CNT_INI			0ul
+#define G_TASK_SYS_TICK_CNT_INI		0ul
+
+#define DEL_SYS_MIN					0ul
+#define DEL_SYS_MED					50ul
+#define DEL_SYS_MAX					500ul
+/********************** typedef **********************************************/
+
+control_humedad_dta_t control_humedad_dta = {DEL_SYS_MIN, NADA_HUM, IDLE_HUM, false};
+
+void init_control_humedad_statechart(){
+
+	init_queue_event_control_humedad();
+
+}
+
+void update_control_humedad_statechart(){
+
+	control_humedad_dta_t *p_control_humedad_dta;
+
+	/* Update Task System Data Pointer */
+	p_control_humedad_dta = &control_humedad_dta;
+
+
+	if (true == any_event_control_humedad())
+	{
+		p_control_humedad_dta->flag = true;
+		p_control_humedad_dta->event = get_event_control_humedad();
+	}
+
+	switch (p_control_humedad_dta->state)
+	{
+		case NADA:
+			//completar con los casos que haga falta
+			break;
+	}
+
+}
