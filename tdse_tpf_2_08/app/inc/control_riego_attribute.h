@@ -12,10 +12,10 @@ extern "C" {
 
 /********************** typedef **********************************************/
 
-typedef enum control_riego_ev {IDLE_RIEGO/*COMPLETAR CON EVENTOS*/} control_riego_ev_t;
+typedef enum control_riego_ev {SENSE_RIEGO_READY, ENTRY, tick} control_riego_ev_t;
 
-typedef enum control_riego_st {NADA_RIEGO/*COMPLETAR CON ESTADOS*/} control_riego_st_t;
-
+typedef enum control_riego_st {IDLE_RIEGO, CHECK_RIEGO, REGAR_RIEGO, SENSE_RIEGO} control_riego_st_t;
+#define R_0    50
 typedef struct
 {
 	uint32_t			tick;

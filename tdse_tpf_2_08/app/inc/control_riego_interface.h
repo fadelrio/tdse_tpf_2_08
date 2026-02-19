@@ -21,6 +21,13 @@ extern control_riego_ev_t get_event_control_riego(void);
 extern bool any_event_control_riego(void);
 extern void enable_queue_control_riego(void);
 extern void disable_queue_control_riego(void);
+extern void sense_riego(void);
+void regador_on(void);
+void regador_off(void);
+void check_error_rieg(void);
+uint32_t leer_humedad(void);
+uint32_t timer_riego(void);
+uint32_t timer_cambio_riego(void);
 
 
 /********************** End of CPP guard *************************************/

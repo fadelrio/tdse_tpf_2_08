@@ -96,3 +96,31 @@ void disable_queue_control_riego(void){
 }
 
 /********************** end of file ******************************************/
+
+void sense_riego(void) {
+
+}
+
+void regador_on(void) {
+
+}
+
+void regador_off(void) {
+
+}
+
+void check_error_rieg(void) {
+
+}
+
+uint32_t leer_humedad(void) {
+    return 0;
+}
+
+uint32_t timer_riego(void) {
+    return 10;
+}
+
+uint32_t timer_cambio_riego(void) {
+    return 10;
+}

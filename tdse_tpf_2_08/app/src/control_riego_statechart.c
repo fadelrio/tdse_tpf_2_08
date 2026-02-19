@@ -16,7 +16,7 @@
 #define DEL_SYS_MAX					500ul
 /********************** typedef **********************************************/
 
-control_riego_dta_t control_riego_dta = {DEL_SYS_MIN, NADA_RIEGO, IDLE_RIEGO, false};
+control_riego_dta_t control_riego_dta = {DEL_SYS_MIN, IDLE_RIEGO, false};
 
 void init_control_riego_statechart(){
 
@@ -32,7 +32,7 @@ void update_control_riego_statechart(){
 	p_control_riego_dta = &control_riego_dta;
 
 
-	if (true == any_event_control_riego())
+	if (any_event_control_riego())
 	{
 		p_control_riego_dta->flag = true;
 		p_control_riego_dta->event = get_event_control_riego();
@@ -40,8 +40,58 @@ void update_control_riego_statechart(){
 
 	switch (p_control_riego_dta->state)
 	{
-		case NADA_RIEGO:
-			//completar con los casos que haga falta
+		case IDLE_RIEGO:
+			if (p_control_riego_dta->flag) {
+				if(p_control_riego_dta->event == tick) {//timer > 0   preguntar si el evento es "tick", un poco raro eso
+					p_control_riego_dta->tick--; //me bajo el tick de apoco, es lo q dijo martu de hacer x separado pero weno eso :)
+				} else {//timer == 0
+					sense_riego();
+					p_control_riego_dta->state = CHECK_RIEGO;
+				}
+				p_control_riego_dta->flag = false;
+			}
+			break;
+
+		case CHECK_RIEGO:
+			if (p_control_riego_dta->flag && p_control_riego_dta->event == SENSE_RIEGO_READY) {
+				if(leer_humedad() < R_0) {//Riego < R_0
+					p_control_riego_dta->tick = timer_cambio_riego();
+					regador_on();
+					p_control_riego_dta->state = REGAR_RIEGO;
+				} else { //Riego > R_0
+					p_control_riego_dta->tick = timer_riego();
+					p_control_riego_dta->state = IDLE_RIEGO;
+				}
+				p_control_riego_dta->flag = false;
+			}
+			break;
+
+		case REGAR_RIEGO:
+			if(p_control_riego_dta->flag && p_control_riego_dta->event == tick) {
+				if(p_control_riego_dta->tick > 0) { //timer > 0
+					p_control_riego_dta->tick--;
+				} else { //timer == 0
+					sense_riego();
+					regador_off();
+					p_control_riego_dta->state = SENSE_RIEGO;
+				}
+				p_control_riego_dta->flag = false;
+			}
+			break;
+
+		case SENSE_RIEGO:
+			if(p_control_riego_dta->flag && p_control_riego_dta->event == SENSE_RIEGO_READY) {
+				check_error_rieg();
+				if(leer_humedad() < R_0) {
+					p_control_riego_dta->tick = timer_cambio_riego();
+					regador_on();
+					p_control_riego_dta->state = REGAR_RIEGO;
+				} else {
+					p_control_riego_dta->tick = timer_riego();
+					p_control_riego_dta->state = IDLE_RIEGO;
+				}
+				p_control_riego_dta->flag = false;
+			}
 			break;
 	}
 
