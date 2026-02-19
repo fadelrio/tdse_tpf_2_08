@@ -12,9 +12,9 @@ extern "C" {
 
 /********************** typedef **********************************************/
 
-typedef enum control_luz_ev {IDLE_LUZ/*COMPLETAR CON EVENTOS*/} control_luz_ev_t;
+typedef enum control_luz_ev {NADA_LUZ, ENTRY_LUZ, SENSAR_LUZ_READY/*COMPLETAR CON EVENTOS*/} control_luz_ev_t;
 
-typedef enum control_luz_st {NADA_LUZ/*COMPLETAR CON ESTADOS*/} control_luz_st_t;
+typedef enum control_luz_st {IDLE_LUZ, CHECK_LUZ,ILUMINAR, BAJAR_LUZ,SUBIR_LUZ/*COMPLETAR CON ESTADOS*/} control_luz_st_t;
 
 typedef struct
 {

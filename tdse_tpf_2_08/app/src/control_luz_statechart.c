@@ -16,7 +16,12 @@
 #define DEL_SYS_MAX					500ul
 /********************** typedef **********************************************/
 
-control_luz_dta_t control_luz_dta = {DEL_SYS_MIN, NADA_LUZ, IDLE_LUZ, false};
+control_luz_dta_t control_luz_dta = {DEL_SYS_MIN, IDLE_LUZ, NADA_LUZ, false};
+
+int delta_luz;
+int luz;
+int L_0;
+int estado_led;
 
 void init_control_luz_statechart(){
 
@@ -40,9 +45,65 @@ void update_control_luz_statechart(){
 
 	switch (p_control_luz_dta->state)
 	{
-		case NADA_LUZ:
-			//completar con los casos que haga falta
-			break;
+		case IDLE_LUZ:
+			if(p_control_luz_dta->flag == true){
+				if(p_control_luz_dta->tick > 0){ //el tick es un evento? por lo q pusimos si pero no es algo q pasa
+					p_control_luz_dta->tick--;
+					p_control_luz_dta->flag = false;
+				}else if(p_control_luz_dta->flag == 0){
+					p_control_luz_dta->state = CHECK_LUZ;
+					p_control_luz_dta->flag = false;
+					//sensar_luz() aca va la funcion esta pero hay que armarla todavia
+				}
+			}//completar con los casos que haga falta
+		case CHECK_LUZ:
+			if(p_control_luz_dta->flag == true && p_control_luz_dta->event == SENSAR_LUZ_READY){
+				if(luz > (L_0 + delta_luz) && estado_led > 0){
+					p_control_luz_dta->state = BAJAR_LUZ;
+					p_control_luz_dta->flag = false;
+					estado_led = delta_luz;
+				}else if(luz < (L_0 - delta_luz) && estado_led < 100){
+					p_control_luz_dta->state = ILUMINAR;
+					p_control_luz_dta->flag = false;
+				}else if((L_0 - delta_luz) < luz && luz < (L_0 + delta_luz)){
+					p_control_luz_dta->state = IDLE_LUZ;
+					p_control_luz_dta->flag = false;
+				}
+			}
+		case ILUMINAR:
+			if(p_control_luz_dta->flag == true && p_control_luz_dta->event == ENTRY_LUZ){
+				if(luz < (L_0 - delta_luz) && estado_led < 100){
+					p_control_luz_dta->state = SUBIR_LUZ;
+					p_control_luz_dta->flag = false;
+					//check_luz_error() funcion que hay que armar
+				}else if(estado_led == 100){
+					p_control_luz_dta->state = IDLE_LUZ;
+					p_control_luz_dta->flag = false;
+					//check_luz_error() funcin que hay que usar
+				}else if(luz > L_0 - delta_luz){
+					p_control_luz_dta->state = CHECK_LUZ;
+					p_control_luz_dta->flag = false;
+					//sensar_luz() funcion que hay que hacer
+				}
+			}
+		case BAJAR_LUZ:
+			if(p_control_luz_dta->flag == true && p_control_luz_dta->event == ENTRY_LUZ){
+				if(estado_led > 0){
+					p_control_luz_dta->state = CHECK_LUZ;
+					p_control_luz_dta->flag = false;
+					estado_led-= delta_luz;
+				}else if(estado_led == 0){
+					p_control_luz_dta->state = IDLE_LUZ;
+					p_control_luz_dta->flag = false;
+				}
+			}
+
+		case SUBIR_LUZ:
+			if(p_control_luz_dta->flag == true && p_control_luz_dta->event == ENTRY_LUZ){
+				p_control_luz_dta->state = ILUMINAR;
+				p_control_luz_dta->flag = false;
+				estado_led += delta_luz;
+			}
 	}
 
 }
