@@ -12,9 +12,10 @@ extern "C" {
 
 /********************** typedef **********************************************/
 
-typedef enum control_temperatura_ev {IDLE_TEMP/*COMPLETAR CON EVENTOS*/} control_temperatura_ev_t;
+typedef enum control_temperatura_ev {IDLE_TEMP,TICK,SENSE_TEMP_READY,ENTRY} control_temperatura_ev_t;
 
-typedef enum control_temperatura_st {NADA_TEMP/*COMPLETAR CON ESTADOS*/} control_temperatura_st_t;
+typedef enum control_temperatura_st {NADA_TEMP,CHECK_TEMP,ENFRIAR,SENSE_FRIO,CALENTAR,SENSE_CALOR} control_temperatura_st_t;
+
 
 typedef struct
 {
