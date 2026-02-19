@@ -12,9 +12,9 @@ extern "C" {
 
 /********************** typedef **********************************************/
 
-typedef enum control_humedad_ev {IDLE_HUM/*COMPLETAR CON EVENTOS*/} control_humedad_ev_t;
+typedef enum control_humedad_ev {NADA_HUM, SENSE_HUM_READY} control_humedad_ev_t;
 
-typedef enum control_humedad_st {NADA_HUM/*COMPLETAR CON ESTADOS*/} control_humedad_st_t;
+typedef enum control_humedad_st {IDLE_HUM, CHECK_HUM, SECAR, SENSE_SEC, HUMEDECER, SENSE_HUM} control_humedad_st_t;
 
 typedef struct
 {
@@ -22,6 +22,7 @@ typedef struct
 	control_humedad_st_t	state;
 	control_humedad_ev_t	event;
 	bool				flag;
+	float				humedad; //TODO corregir tipo de dato segun corresponda
 } control_humedad_dta_t;
 
 /********************** external data declaration ****************************/
