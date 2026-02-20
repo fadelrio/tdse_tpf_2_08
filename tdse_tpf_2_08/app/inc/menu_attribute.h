@@ -12,9 +12,9 @@ extern "C" {
 
 /********************** typedef **********************************************/
 
-typedef enum menu_ev {IDLE_MENU/*COMPLETAR CON EVENTOS*/} menu_ev_t;
+typedef enum menu_st {TEMPERATURA_SELECT, TEMPERATURA_MENU, LUZ_SELECT, LUZ_MENU, HUMEDAD_SELECT, HUMEDAD_MENU, RIEGO_SELECT, RIEGO_MENU/*COMPLETAR CON EVENTOS*/} menu_st_t;
 
-typedef enum menu_st {NADA_MENU/*COMPLETAR CON ESTADOS*/} menu_st_t;
+typedef enum menu_ev {NEXT, ENTER, UP, DOWN, ESCAPE/*COMPLETAR CON ESTADOS*/} menu_ev_t;
 
 typedef struct
 {
