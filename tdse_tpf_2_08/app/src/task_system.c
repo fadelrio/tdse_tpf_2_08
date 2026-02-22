@@ -80,7 +80,7 @@ typedef enum task_system_mode {CONTROL, MENU, SYSTEM_ERROR} task_system_mode_t;
 
 /********************** internal data declaration ****************************/
 task_system_dta_t task_system_dta =
-	{DEL_SYS_MIN, ST_SYS_CONTROL, EV_SYS_IDLE, false};
+	{DEL_SYS_MIN, ST_SYS_CONTROL, EV_SYS_NADA, false};
 
 
 /********************** internal functions declaration ***********************/
@@ -135,7 +135,7 @@ void task_system_init(void *parameters)
 	state = ST_SYS_CONTROL;
 	p_task_system_dta->state = state;
 
-	event = EV_SYS_IDLE;
+	event = EV_SYS_NADA;
 	p_task_system_dta->event = event;
 
 	b_event = false;
@@ -376,7 +376,7 @@ void system_statechart(task_system_dta_t *p_task_system_dta){
 
 				p_task_system_dta->tick  = DEL_SYS_MIN;
 				p_task_system_dta->state = ST_SYS_CONTROL;
-				p_task_system_dta->event = EV_SYS_IDLE;
+				p_task_system_dta->event = EV_SYS_NADA;
 				p_task_system_dta->flag = false;
 
 				break;

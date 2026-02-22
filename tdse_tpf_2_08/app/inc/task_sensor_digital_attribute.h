@@ -76,7 +76,7 @@ typedef struct
 } task_sensor_digital_dta_t;
 
 /********************** external data declaration ****************************/
-extern task_sensor_digital_dta_t task_sensor_dta_list[];
+extern task_sensor_digital_dta_t task_sensor_boton_dta_list[];
 
 /********************** external functions declaration ***********************/
 

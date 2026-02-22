@@ -29,14 +29,14 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @file   : task_sensor_attribute.h
+ * @file   : task_sensor.h
  * @date   : Set 26, 2023
  * @author : Juan Manuel Cruz <jcruz@fi.uba.ar> <jcruz@frba.utn.edu.ar>
  * @version	v1.0.0
  */
 
-#ifndef TASK_INC_TASK_SENSOR_ANALOGICO_ATTRIBUTE_H_
-#define TASK_INC_TASK_SENSOR_ANALOGICO_ATTRIBUTE_H_
+#ifndef TASK_INC_TASK_SENSOR_BOTON_H_
+#define TASK_INC_TASK_SENSOR_BOTON_H_
 
 /********************** CPP guard ********************************************/
 #ifdef __cplusplus
@@ -49,42 +49,19 @@ extern "C" {
 
 /********************** typedef **********************************************/
 
-/* Events to excite Task Sensor */
-typedef enum task_sensor_analogico_ev {NADA_SENSOR_ANA/*TODO completar*/} task_sensor_analogico_ev_t;
-
-/* States of Task Sensor */
-typedef enum task_sensor_analogico_st {ST_IDLE_SENSOR_ANA/*TODO completar*/} task_sensor_analogico_st_t;
-
-/* Identifier of Task Sensor */
-typedef enum task_sensor_analogico_id {ID_BTN_A} task_sensor_analogico_id_t;
-
-typedef struct
-{
-	task_sensor_analogico_id_t	identifier;
-	GPIO_TypeDef *		gpio_port;
-	uint16_t			pin;
-	GPIO_PinState		pressed;
-	uint32_t			tick_max;
-} task_sensor_analogico_cfg_t;
-
-typedef struct
-{
-	uint32_t			tick;
-	task_sensor_analogico_st_t	state;
-	task_sensor_analogico_ev_t	event;
-	bool flag;
-} task_sensor_analogico_dta_t;
-
 /********************** external data declaration ****************************/
-extern task_sensor_analogico_dta_t task_sensor_boton_dta_list[];
+extern uint32_t g_task_sensor_boton_cnt;
+extern volatile uint32_t g_task_sensor_boton_tick_cnt;
 
 /********************** external functions declaration ***********************/
+extern void task_sensor_boton_init(void *parameters);
+extern void task_sensor_boton_update(void *parameters);
 
 /********************** End of CPP guard *************************************/
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* TASK_INC_TASK_SENSOR_ATTRIBUTE_H_ */
+#endif /* TASK_INC_TASK_SENSOR_H_ */
 
 /********************** end of file ******************************************/

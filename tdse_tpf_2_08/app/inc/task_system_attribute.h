@@ -88,7 +88,7 @@ extern "C" {
 typedef enum system_error {NADA,TEMPERATURA,HUMEDAD,LUZ,RIEGO} system_error_t;
 
 /* Events to excite Task System */
-typedef enum task_system_ev {EV_SYS_IDLE,EV_SYS_TOGGLE_MENU,EV_SYS_ERROR} task_system_ev_t;
+typedef enum task_system_ev {EV_SYS_NADA,EV_SYS_TOGGLE_MENU,EV_SYS_ERROR} task_system_ev_t;
 
 /* State of Task System */
 typedef enum task_system_st {ST_SYS_CONTROL,ST_SYS_MENU,ST_SYS_ERROR} task_system_st_t;
@@ -100,6 +100,14 @@ typedef struct
 	task_system_ev_t	event;
 	bool				flag;
 } task_system_dta_t;
+
+typedef struct {
+	float t_0; // temperatura en grados centigrados
+	float h_0; // porcentaje de humedad (0 a 1)
+	float l_0; // porcentaje de luz (0 a 1)
+	float r_0; // porcentaje de riego? TODO chequear que devuelve el sensor
+} task_system_cfg_t;
+
 
 /********************** external data declaration ****************************/
 extern task_system_dta_t task_system_dta;
