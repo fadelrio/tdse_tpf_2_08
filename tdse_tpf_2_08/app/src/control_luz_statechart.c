@@ -42,6 +42,7 @@ void update_control_luz_statechart(){
 		p_control_luz_dta->flag = true;
 		p_control_luz_dta->event = get_event_control_luz();
 	}
+	//TODO CHEQUEAR STATECHART!!!!!!
 
 	switch (p_control_luz_dta->state)
 	{
@@ -50,7 +51,7 @@ void update_control_luz_statechart(){
 				if(p_control_luz_dta->tick > 0){ //el tick es un evento? por lo q pusimos si pero no es algo q pasa
 					p_control_luz_dta->tick--;
 					p_control_luz_dta->flag = false;
-				}else if(p_control_luz_dta->flag == 0){
+				}else if(p_control_luz_dta->tick == 0){
 					p_control_luz_dta->state = CHECK_LUZ;
 					p_control_luz_dta->flag = false;
 					//sensar_luz() aca va la funcion esta pero hay que armarla todavia
@@ -65,45 +66,39 @@ void update_control_luz_statechart(){
 				}else if(luz < (L_0 - delta_luz) && estado_led < 100){
 					p_control_luz_dta->state = ILUMINAR;
 					p_control_luz_dta->flag = false;
-				}else if((L_0 - delta_luz) < luz && luz < (L_0 + delta_luz)){
+				}else{
 					p_control_luz_dta->state = IDLE_LUZ;
 					p_control_luz_dta->flag = false;
 				}
 			}
 		case ILUMINAR:
-			if(p_control_luz_dta->flag == true && p_control_luz_dta->event == ENTRY_LUZ){
 				if(luz < (L_0 - delta_luz) && estado_led < 100){
 					p_control_luz_dta->state = SUBIR_LUZ;
-					p_control_luz_dta->flag = false;
+					//p_control_luz_dta->flag = false;
 					//check_luz_error() funcion que hay que armar
 				}else if(estado_led == 100){
 					p_control_luz_dta->state = IDLE_LUZ;
-					p_control_luz_dta->flag = false;
+					//p_control_luz_dta->flag = false;
 					//check_luz_error() funcin que hay que usar
 				}else if(luz > L_0 - delta_luz){
 					p_control_luz_dta->state = CHECK_LUZ;
-					p_control_luz_dta->flag = false;
+					//p_control_luz_dta->flag = false;
 					//sensar_luz() funcion que hay que hacer
 				}
-			}
 		case BAJAR_LUZ:
-			if(p_control_luz_dta->flag == true && p_control_luz_dta->event == ENTRY_LUZ){
 				if(estado_led > 0){
 					p_control_luz_dta->state = CHECK_LUZ;
-					p_control_luz_dta->flag = false;
+					//p_control_luz_dta->flag = false;
 					estado_led-= delta_luz;
 				}else if(estado_led == 0){
 					p_control_luz_dta->state = IDLE_LUZ;
-					p_control_luz_dta->flag = false;
+					//p_control_luz_dta->flag = false;
 				}
-			}
 
 		case SUBIR_LUZ:
-			if(p_control_luz_dta->flag == true && p_control_luz_dta->event == ENTRY_LUZ){
 				p_control_luz_dta->state = ILUMINAR;
-				p_control_luz_dta->flag = false;
+				//p_control_luz_dta->flag = false;
 				estado_led += delta_luz;
 			}
-	}
 
 }
