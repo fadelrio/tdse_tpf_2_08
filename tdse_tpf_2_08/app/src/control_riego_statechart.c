@@ -41,16 +41,14 @@ void update_control_riego_statechart(){
 	switch (p_control_riego_dta->state)
 	{
 		case IDLE_RIEGO:
-			if (p_control_riego_dta->flag) {
-				if(p_control_riego_dta->event == tick) {//timer > 0   preguntar si el evento es "tick", un poco raro eso
-					p_control_riego_dta->tick--; //me bajo el tick de apoco, es lo q dijo martu de hacer x separado pero weno eso :)
-				} else {//timer == 0
-					sense_riego();
-					p_control_riego_dta->state = CHECK_RIEGO;
-				}
-				p_control_riego_dta->flag = false;
+			if(p_control_riego_dta->tick > 0) {
+				p_control_riego_dta->tick--;
+			} else {//timer == 0
+				sense_riego();
+				p_control_riego_dta->state = CHECK_RIEGO;
 			}
-			break;
+			p_control_riego_dta->flag = false;
+		break;
 
 		case CHECK_RIEGO:
 			if (p_control_riego_dta->flag && p_control_riego_dta->event == SENSE_RIEGO_READY) {
@@ -67,17 +65,15 @@ void update_control_riego_statechart(){
 			break;
 
 		case REGAR_RIEGO:
-			if(p_control_riego_dta->flag && p_control_riego_dta->event == tick) {
-				if(p_control_riego_dta->tick > 0) { //timer > 0
-					p_control_riego_dta->tick--;
-				} else { //timer == 0
-					sense_riego();
-					regador_off();
-					p_control_riego_dta->state = SENSE_RIEGO;
-				}
-				p_control_riego_dta->flag = false;
+			if(p_control_riego_dta->tick > 0) { //timer > 0
+				p_control_riego_dta->tick--;
+			} else { //timer == 0
+				sense_riego();
+				regador_off();
+				p_control_riego_dta->state = SENSE_RIEGO;
 			}
-			break;
+			p_control_riego_dta->flag = false;
+		break;
 
 		case SENSE_RIEGO:
 			if(p_control_riego_dta->flag && p_control_riego_dta->event == SENSE_RIEGO_READY) {
