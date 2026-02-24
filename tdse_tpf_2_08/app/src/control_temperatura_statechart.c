@@ -4,6 +4,7 @@
 #include "logger.h"
 #include "dwt.h"
 
+#include "task_system_attribute.h"
 #include "control_temperatura_attribute.h"
 #include "control_temperatura_interface.h"
 /********************** macros ***********************************************/
@@ -14,7 +15,6 @@
 #define DEL_SYS_MIN					0ul
 #define DEL_SYS_MED					50ul
 #define DEL_SYS_MAX					500ul
-#define T_0                         0ul
 #define delta                       0ul
 #define temperatura                 0ul
 #define TIMER_CAMB_TEMP             10ul
@@ -29,7 +29,7 @@ void init_control_temperatura_statechart(){
 
 }
 
-void update_control_temperatura_statechart(){
+void update_control_temperatura_statechart(const task_system_cfg_t p_task_system_cfg){
 
 	control_temperatura_dta_t *p_control_temperatura_dta;
 
@@ -61,10 +61,10 @@ void update_control_temperatura_statechart(){
 	}
 	case CHECK_TEMP:{
 		if (p_control_temperatura_dta->flag && (p_control_temperatura_dta->event == SENSE_TEMP_READY)){
-			if (temperatura > T_0 + delta){
+			if (temperatura > p_task_system_cfg.t_0 + delta){
 				p_control_temperatura_dta->state = ENFRIAR;
 				p_control_temperatura_dta->tick = TIMER_CAMB_TEMP;
-			}else if(temperatura < T_0 - delta){
+			}else if(temperatura < p_task_system_cfg.t_0 - delta){
 				p_control_temperatura_dta->state = CALENTAR;
 				p_control_temperatura_dta->tick =TIMER_CAMB_TEMP;
 			}else{
@@ -98,11 +98,11 @@ void update_control_temperatura_statechart(){
 	}
 	case SENSE_FRIO:{
 		if(p_control_temperatura_dta->flag && (p_control_temperatura_dta->event == SENSE_TEMP_READY)){
-			if (temperatura < T_0 +delta){
+			if (temperatura < p_task_system_cfg.t_0 +delta){
 				p_control_temperatura_dta->state = CHECK_TEMP;
 				//sensar_temp();
 				//check_error_temp();
-			}else if(temperatura > T_0 + delta){
+			}else if(temperatura > p_task_system_cfg.t_0 + delta){
 				p_control_temperatura_dta->state = ENFRIAR;
 				p_control_temperatura_dta->tick = TIMER_CAMB_TEMP;
 				//check_error_temp();
@@ -136,11 +136,11 @@ void update_control_temperatura_statechart(){
 	{
 		if(p_control_temperatura_dta->flag){
 			if(p_control_temperatura_dta->event == SENSE_TEMP_READY){
-				if(temperatura > T_0 - delta){
+				if(temperatura > p_task_system_cfg.t_0 - delta){
 					p_control_temperatura_dta->state = CHECK_TEMP;
 					//sensar_temp();
 					//check_error_temp();
-				}else if(temperatura < T_0 - delta){
+				}else if(temperatura < p_task_system_cfg.t_0 - delta){
 					p_control_temperatura_dta->state = CALENTAR;
 					p_control_temperatura_dta->tick = TIMER_CAMB_TEMP;
 					//check_error_temp();

@@ -46,9 +46,9 @@
 /* Application & Tasks includes */
 #include "board.h"
 #include "task_system.h"
-#include "task_actuator.h"
 #include "task_sensor_digital.h"
 #include "task_sensor_analogico.h"
+#include <task_actuator_digital.h>
 
 /********************** macros and definitions *******************************/
 #define G_APP_CNT_INI		0ul
@@ -74,7 +74,7 @@ const task_cfg_t task_cfg_list[]	= {
 		{task_sensor_analogico_init, 		task_sensor_analogico_update, 	NULL},
 		{task_sensor_digital_init, 		task_sensor_digital_update, 	NULL},
 		{task_system_init, 		task_system_update, 	NULL},
-		{task_actuator_init,	task_actuator_update, 	NULL}
+		{task_actuator_digital_init,	task_actuator_digital_update, 	NULL}
 };
 
 #define TASK_QTY	(sizeof(task_cfg_list)/sizeof(task_cfg_t))
@@ -129,7 +129,7 @@ void app_init(void)
 
 	g_task_sensor_digital_tick_cnt = G_APP_TICK_CNT_INI;
 	g_task_system_tick_cnt = G_APP_TICK_CNT_INI;
-	g_task_actuator_tick_cnt = G_APP_TICK_CNT_INI;
+	g_task_actuator_digital_tick_cnt = G_APP_TICK_CNT_INI;
     __asm("CPSIE i");	/* enable interrupts */
 }
 
@@ -199,7 +199,7 @@ void HAL_SYSTICK_Callback(void)
 	g_task_sensor_analogico_tick_cnt++;
 	g_task_sensor_digital_tick_cnt++;
 	g_task_system_tick_cnt++;
-	g_task_actuator_tick_cnt++;
+	g_task_actuator_digital_tick_cnt++;
 }
 
 /********************** end of file ******************************************/

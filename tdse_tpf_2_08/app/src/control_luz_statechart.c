@@ -4,6 +4,7 @@
 #include "logger.h"
 #include "dwt.h"
 
+#include "task_system_attribute.h"
 #include "control_luz_attribute.h"
 #include "control_luz_interface.h"
 /********************** macros ***********************************************/
@@ -20,7 +21,6 @@ control_luz_dta_t control_luz_dta = {DEL_SYS_MIN, IDLE_LUZ, NADA_LUZ, false};
 
 int delta_luz;
 int luz;
-int L_0;
 int estado_led;
 
 void init_control_luz_statechart(){
@@ -29,7 +29,7 @@ void init_control_luz_statechart(){
 
 }
 
-void update_control_luz_statechart(){
+void update_control_luz_statechart(const task_system_cfg_t p_task_system_cfg){
 
 	control_luz_dta_t *p_control_luz_dta;
 
@@ -59,11 +59,11 @@ void update_control_luz_statechart(){
 			}//completar con los casos que haga falta
 		case CHECK_LUZ:
 			if(p_control_luz_dta->flag == true && p_control_luz_dta->event == SENSAR_LUZ_READY){
-				if(luz > (L_0 + delta_luz) && estado_led > 0){
+				if(luz > (p_task_system_cfg.l_0 + delta_luz) && estado_led > 0){
 					p_control_luz_dta->state = BAJAR_LUZ;
 					p_control_luz_dta->flag = false;
 					estado_led = delta_luz;
-				}else if(luz < (L_0 - delta_luz) && estado_led < 100){
+				}else if(luz < (p_task_system_cfg.l_0 - delta_luz) && estado_led < 100){
 					p_control_luz_dta->state = ILUMINAR;
 					p_control_luz_dta->flag = false;
 				}else{
@@ -72,7 +72,7 @@ void update_control_luz_statechart(){
 				}
 			}
 		case ILUMINAR:
-				if(luz < (L_0 - delta_luz) && estado_led < 100){
+				if(luz < (p_task_system_cfg.l_0 - delta_luz) && estado_led < 100){
 					p_control_luz_dta->state = SUBIR_LUZ;
 					//p_control_luz_dta->flag = false;
 					//check_luz_error() funcion que hay que armar
@@ -80,7 +80,7 @@ void update_control_luz_statechart(){
 					p_control_luz_dta->state = IDLE_LUZ;
 					//p_control_luz_dta->flag = false;
 					//check_luz_error() funcin que hay que usar
-				}else if(luz > L_0 - delta_luz){
+				}else if(luz > p_task_system_cfg.l_0 - delta_luz){
 					p_control_luz_dta->state = CHECK_LUZ;
 					//p_control_luz_dta->flag = false;
 					//sensar_luz() funcion que hay que hacer

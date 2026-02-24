@@ -35,8 +35,8 @@
  * @version	v1.0.0
  */
 
-#ifndef TASK_INC_TASK_ACTUATOR_ATTRIBUTE_H_
-#define TASK_INC_TASK_ACTUATOR_ATTRIBUTE_H_
+#ifndef TASK_INC_TASK_ACTUATOR_ANALOGICO_ATTRIBUTE_H_
+#define TASK_INC_TASK_ACTUATOR_ANALOGICO_ATTRIBUTE_H_
 
 /********************** CPP guard ********************************************/
 #ifdef __cplusplus
@@ -94,43 +94,43 @@ extern "C" {
  * 	------------------------+-----------------------+-----------------------+-----------------------+------------------------ */
 
 /* Events to excite Task Actuator */
-typedef enum task_actuator_ev {EV_LED_XX_OFF,
+typedef enum task_actuator_analogico_ev {EV_LED_XX_OFF,
 							   EV_LED_XX_ON,
 							   EV_LED_XX_NOT_BLINK,
 							   EV_LED_XX_BLINK,
-							   EV_LED_XX_PULSE} task_actuator_ev_t;
+							   EV_LED_XX_PULSE} task_actuator_analogico_ev_t;
 
 /* States of Task Actuator */
-typedef enum task_actuator_st {ST_LED_XX_OFF,
+typedef enum task_actuator_analogico_st {ST_LED_XX_OFF,
 							   ST_LED_XX_ON,
 							   ST_LED_XX_BLINK_ON,
 							   ST_LED_XX_BLINK_OFF,
-							   ST_LED_XX_PULSE} task_actuator_st_t;
+							   ST_LED_XX_PULSE} task_actuator_analogico_st_t;
 
 /* Identifier of Task Actuator */
-typedef enum task_actuator_id {ID_LED_A} task_actuator_id_t;
+typedef enum task_actuator_analogico_id {ID_LED_A} task_actuator_analogico_id_t;
 
 typedef struct
 {
-	task_actuator_id_t	identifier;
+	task_actuator_analogico_id_t	identifier;
 	GPIO_TypeDef *		gpio_port;
 	uint16_t			pin;
 	GPIO_PinState		led_on;
 	GPIO_PinState		led_off;
 	uint32_t			tick_blink;
 	uint32_t			tick_pulse;
-} task_actuator_cfg_t;
+} task_actuator_analogico_cfg_t;
 
 typedef struct
 {
 	uint32_t			tick;
-	task_actuator_st_t	state;
-	task_actuator_ev_t	event;
+	task_actuator_analogico_st_t	state;
+	task_actuator_analogico_ev_t	event;
 	bool				flag;
-} task_actuator_dta_t;
+} task_actuator_analogico_dta_t;
 
 /********************** external data declaration ****************************/
-extern task_actuator_dta_t task_actuator_dta_list[];
+extern task_actuator_analogico_dta_t task_actuator_analogico_dta_list[];
 
 /********************** external functions declaration ***********************/
 

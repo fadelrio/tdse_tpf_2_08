@@ -17,7 +17,7 @@ extern "C" {
 /********************** external functions declaration ***********************/
 
 extern void init_control_luz_statechart(void);
-extern void update_control_luz_statechart(void);
+extern void update_control_luz_statechart(const task_system_cfg_t p_task_system_cfg);
 
 /********************** End of CPP guard *************************************/
 #ifdef __cplusplus

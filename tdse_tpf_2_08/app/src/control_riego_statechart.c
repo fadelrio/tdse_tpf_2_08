@@ -4,6 +4,7 @@
 #include "logger.h"
 #include "dwt.h"
 
+#include "task_system_attribute.h"
 #include "control_riego_attribute.h"
 #include "control_riego_interface.h"
 /********************** macros ***********************************************/
@@ -24,7 +25,7 @@ void init_control_riego_statechart(){
 
 }
 
-void update_control_riego_statechart(){
+void update_control_riego_statechart(const task_system_cfg_t p_task_system_cfg){
 
 	control_riego_dta_t *p_control_riego_dta;
 
@@ -52,7 +53,7 @@ void update_control_riego_statechart(){
 
 		case CHECK_RIEGO:
 			if (p_control_riego_dta->flag && p_control_riego_dta->event == SENSE_RIEGO_READY) {
-				if(leer_humedad() < R_0) {//Riego < R_0
+				if(leer_humedad() < p_task_system_cfg.r_0) {//Riego < R_0 //TODO falta el histeresis
 					p_control_riego_dta->tick = timer_cambio_riego();
 					regador_on();
 					p_control_riego_dta->state = REGAR_RIEGO;
@@ -78,7 +79,7 @@ void update_control_riego_statechart(){
 		case SENSE_RIEGO:
 			if(p_control_riego_dta->flag && p_control_riego_dta->event == SENSE_RIEGO_READY) {
 				check_error_rieg();
-				if(leer_humedad() < R_0) {
+				if(leer_humedad() < p_task_system_cfg.r_0) { //TODO falta el histeresis
 					p_control_riego_dta->tick = timer_cambio_riego();
 					regador_on();
 					p_control_riego_dta->state = REGAR_RIEGO;

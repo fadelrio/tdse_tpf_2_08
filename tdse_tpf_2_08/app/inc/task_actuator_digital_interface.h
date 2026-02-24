@@ -29,45 +29,36 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- *
- * @file   : task_actuator_interface.c
+ * @file   : task_actuator_interface.h
  * @date   : Set 26, 2023
  * @author : Juan Manuel Cruz <jcruz@fi.uba.ar> <jcruz@frba.utn.edu.ar>
  * @version	v1.0.0
  */
 
+#ifndef TASK_INC_TASK_ACTUATOR_DIGITAL_INTERFACE_H_
+#define TASK_INC_TASK_ACTUATOR_DIGITAL_INTERFACE_H_
+
+/********************** CPP guard ********************************************/
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /********************** inclusions *******************************************/
-/* Project includes */
-#include "main.h"
 
-/* Demo includes */
-#include "logger.h"
-#include "dwt.h"
+/********************** macros ***********************************************/
 
-/* Application & Tasks includes */
-#include "board.h"
-#include "app.h"
-#include "task_actuator_attribute.h"
-
-/********************** macros and definitions *******************************/
-
-/********************** internal data declaration ****************************/
-
-/********************** internal functions declaration ***********************/
-
-/********************** internal data definition *****************************/
+/********************** typedef **********************************************/
 
 /********************** external data declaration ****************************/
 
-/********************** external functions definition ************************/
-void put_event_task_actuator(task_actuator_ev_t event, task_actuator_id_t identifier)
-{
-	task_actuator_dta_t *p_task_actuator_dta;
+/********************** external functions declaration ***********************/
+extern void put_event_task_actuator_digital(task_actuator_digital_ev_t event, task_actuator_digital_id_t identifier);
 
-	p_task_actuator_dta = &task_actuator_dta_list[identifier];
-
-	p_task_actuator_dta->event = event;
-	p_task_actuator_dta->flag = true;
+/********************** End of CPP guard *************************************/
+#ifdef __cplusplus
 }
+#endif
+
+#endif /* TASK_INC_TASK_ACTUATOR_INTERFACE_H_ */
 
 /********************** end of file ******************************************/

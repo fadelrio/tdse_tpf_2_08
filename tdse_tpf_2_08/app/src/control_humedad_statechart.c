@@ -4,6 +4,7 @@
 #include "logger.h"
 #include "dwt.h"
 
+#include "task_system_attribute.h"
 #include "control_humedad_attribute.h"
 #include "control_humedad_interface.h"
 /********************** macros ***********************************************/
@@ -20,7 +21,6 @@
 
 unsigned int timer_humedad = 1000;
 float delta_hum = .5;
-float h_0 = 50;
 unsigned int timer_camb_hum = 1000;
 //TODO reemplazarlos por lo que corresponda
 
@@ -35,7 +35,7 @@ void init_control_humedad_statechart(){
 
 }
 
-void update_control_humedad_statechart(){
+void update_control_humedad_statechart(const task_system_cfg_t p_task_system_cfg){
 
 	control_humedad_dta_t *p_control_humedad_dta;
 
@@ -62,11 +62,11 @@ void update_control_humedad_statechart(){
 		case CHECK_HUM:
 			if (p_control_humedad_dta->flag == true && p_control_humedad_dta->event == SENSE_HUM_READY){
 				p_control_humedad_dta->humedad = 0;//TODO get_humidity_measure()
-				if (p_control_humedad_dta->humedad > h_0 + delta_hum){
+				if (p_control_humedad_dta->humedad > p_task_system_cfg.h_0 + delta_hum){
 					p_control_humedad_dta->state = SECAR;
 					p_control_humedad_dta->tick = timer_camb_hum;
 					//put_event_task_actuator_digital(SECAR_ON); TODO
-				}else if (p_control_humedad_dta->humedad < h_0 - delta_hum){
+				}else if (p_control_humedad_dta->humedad < p_task_system_cfg.h_0 - delta_hum){
 					p_control_humedad_dta->state = HUMEDECER;
 					p_control_humedad_dta->tick = timer_camb_hum;
 					//put_event_task_actuator_digital(HUMEDECER_ON); TODO
@@ -89,12 +89,12 @@ void update_control_humedad_statechart(){
 		case SENSE_SEC:
 			if (p_control_humedad_dta->flag == true && p_control_humedad_dta->event == SENSE_HUM_READY){
 			p_control_humedad_dta->humedad = 0;//TODO get_humidity_measure()
-			if (p_control_humedad_dta->humedad > h_0 + delta_hum){
+			if (p_control_humedad_dta->humedad > p_task_system_cfg.h_0 + delta_hum){
 				p_control_humedad_dta->state = SECAR;
 				p_control_humedad_dta->tick = timer_camb_hum;
 				//put_event_task_actuator_digital(SECAR_ON); TODO
 				//check_error_sec() TODO
-			}else if (p_control_humedad_dta->humedad < h_0 - delta_hum){
+			}else if (p_control_humedad_dta->humedad < p_task_system_cfg.h_0 - delta_hum){
 				p_control_humedad_dta->state = CHECK_HUM;
 				//put_event_task_sensor_dig(GET_HUM); TODO
 				//check_error_sec() TODO
@@ -114,11 +114,11 @@ void update_control_humedad_statechart(){
 		case SENSE_HUM:
 			if (p_control_humedad_dta->flag == true && p_control_humedad_dta->event == SENSE_HUM_READY){
 			p_control_humedad_dta->humedad = 0;//TODO get_humidity_measure()
-			if (p_control_humedad_dta->humedad > h_0 + delta_hum){
+			if (p_control_humedad_dta->humedad > p_task_system_cfg.h_0 + delta_hum){
 				p_control_humedad_dta->state = CHECK_HUM;
 				//put_event_task_sensor_dig(GET_HUM); TODO
 				//check_error_hum() TODO
-			}else if (p_control_humedad_dta->humedad < h_0 - delta_hum){
+			}else if (p_control_humedad_dta->humedad < p_task_system_cfg.h_0 - delta_hum){
 				p_control_humedad_dta->state = HUMEDECER;
 				p_control_humedad_dta->tick = timer_camb_hum;
 				//put_event_task_actuator_digital(HUMEDECER_ON); TODO

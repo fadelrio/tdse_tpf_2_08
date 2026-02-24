@@ -46,8 +46,8 @@
 /* Application & Tasks includes */
 #include "board.h"
 #include "app.h"
-#include "task_actuator_attribute.h"
-#include "task_actuator_interface.h"
+#include <task_actuator_analogico_attribute.h>
+#include <task_actuator_analogico_interface.h>
 
 /********************** macros and definitions *******************************/
 #define G_TASK_ACT_CNT_INIT			0ul
@@ -58,54 +58,54 @@
 #define DEL_LED_XX_MIN				0ul
 
 /********************** internal data declaration ****************************/
-const task_actuator_cfg_t task_actuator_cfg_list[] = {
+const task_actuator_analogico_cfg_t task_actuator_analogico_cfg_list[] = {
 	{ID_LED_A,  LED_A_PORT,  LED_A_PIN, LED_A_ON,  LED_A_OFF,
 	 DEL_LED_XX_BLI, DEL_LED_XX_PUL}
 };
 
-#define ACTUATOR_CFG_QTY	(sizeof(task_actuator_cfg_list)/sizeof(task_actuator_cfg_t))
+#define ACTUATOR_CFG_QTY	(sizeof(task_actuator_analogico_cfg_list)/sizeof(task_actuator_analogico_cfg_t))
 
-task_actuator_dta_t task_actuator_dta_list[] = {
+task_actuator_analogico_dta_t task_actuator_analogico_dta_list[] = {
 	{DEL_LED_XX_MIN, ST_LED_XX_OFF, EV_LED_XX_NOT_BLINK, false}
 };
 
-#define ACTUATOR_DTA_QTY	(sizeof(task_actuator_dta_list)/sizeof(task_actuator_dta_t))
+#define ACTUATOR_DTA_QTY	(sizeof(task_actuator_analogico_dta_list)/sizeof(task_actuator_analogico_dta_t))
 
 /********************** internal functions declaration ***********************/
-void task_actuator_statechart(void);
+void task_actuator_analogico_statechart(void);
 
 /********************** internal data definition *****************************/
-const char *p_task_actuator 		= "Task Actuator (Actuator Statechart)";
-const char *p_task_actuator_ 		= "Non-Blocking & Update By Time Code";
+const char *p_task_actuator_analogico 		= "Task Actuator (Actuator Statechart)";
+const char *p_task_actuator_analogico_ 		= "Non-Blocking & Update By Time Code";
 
 /********************** external data declaration ****************************/
-uint32_t g_task_actuator_cnt;
-volatile uint32_t g_task_actuator_tick_cnt;
+uint32_t g_task_actuator_analogico_cnt;
+volatile uint32_t g_task_actuator_analogico_tick_cnt;
 
 /********************** external functions definition ************************/
-void task_actuator_init(void *parameters)
+void task_actuator_analogico_init(void *parameters)
 {
 	uint32_t index;
-	const task_actuator_cfg_t *p_task_actuator_cfg;
-	task_actuator_dta_t *p_task_actuator_dta;
-	task_actuator_st_t state;
-	task_actuator_ev_t event;
+	const task_actuator_analogico_cfg_t *p_task_actuator_cfg;
+	task_actuator_analogico_dta_t *p_task_actuator_dta;
+	task_actuator_analogico_st_t state;
+	task_actuator_analogico_ev_t event;
 	bool b_event;
 
 	/* Print out: Task Initialized */
 	LOGGER_INFO(" ");
-	LOGGER_INFO("  %s is running - %s", GET_NAME(task_actuator_init), p_task_actuator);
-	LOGGER_INFO("  %s is a %s", GET_NAME(task_actuator), p_task_actuator_);
+	LOGGER_INFO("  %s is running - %s", GET_NAME(task_actuator_analogico_init), p_task_actuator_analogico);
+	LOGGER_INFO("  %s is a %s", GET_NAME(task_actuator), p_task_actuator_analogico_);
 
 	/* Init & Print out: Task execution counter */
-	g_task_actuator_cnt = G_TASK_ACT_CNT_INIT;
-	LOGGER_INFO("   %s = %lu", GET_NAME(g_task_actuator_cnt), g_task_actuator_cnt);
+	g_task_actuator_analogico_cnt = G_TASK_ACT_CNT_INIT;
+	LOGGER_INFO("   %s = %lu", GET_NAME(g_task_actuator_analogico_cnt), g_task_actuator_analogico_cnt);
 
 	for (index = 0; ACTUATOR_DTA_QTY > index; index++)
 	{
 		/* Update Task Actuator Configuration & Data Pointer */
-		p_task_actuator_cfg = &task_actuator_cfg_list[index];
-		p_task_actuator_dta = &task_actuator_dta_list[index];
+		p_task_actuator_cfg = &task_actuator_analogico_cfg_list[index];
+		p_task_actuator_dta = &task_actuator_analogico_dta_list[index];
 
 		/* Init & Print out: Index & Task execution FSM */
 		state = ST_LED_XX_OFF;
@@ -128,16 +128,16 @@ void task_actuator_init(void *parameters)
 	}
 }
 
-void task_actuator_update(void *parameters)
+void task_actuator_analogico_update(void *parameters)
 {
 	bool b_time_update_required = false;
 
 	/* Protect shared resource */
 	__asm("CPSID i");	/* disable interrupts*/
-    if (G_TASK_ACT_TICK_CNT_INI < g_task_actuator_tick_cnt)
+    if (G_TASK_ACT_TICK_CNT_INI < g_task_actuator_analogico_tick_cnt)
     {
 		/* Update Tick Counter */
-    	g_task_actuator_tick_cnt--;
+    	g_task_actuator_analogico_tick_cnt--;
     	b_time_update_required = true;
     }
     __asm("CPSIE i");	/* enable interrupts */
@@ -145,17 +145,17 @@ void task_actuator_update(void *parameters)
     while (b_time_update_required)
     {
 		/* Update Task Counter */
-		g_task_actuator_cnt++;
+		g_task_actuator_analogico_cnt++;
 
 		/* Run Task Statechart */
-    	task_actuator_statechart();
+    	task_actuator_analogico_statechart();
 
     	/* Protect shared resource */
 		__asm("CPSID i");	/* disable interrupts */
-		if (G_TASK_ACT_TICK_CNT_INI < g_task_actuator_tick_cnt)
+		if (G_TASK_ACT_TICK_CNT_INI < g_task_actuator_analogico_tick_cnt)
 		{
 			/* Update Tick Counter */
-			g_task_actuator_tick_cnt--;
+			g_task_actuator_analogico_tick_cnt--;
 			b_time_update_required = true;
 		}
 		else
@@ -166,17 +166,17 @@ void task_actuator_update(void *parameters)
     }
 }
 
-void task_actuator_statechart(void)
+void task_actuator_analogico_statechart(void)
 {
 	uint32_t index;
-	const task_actuator_cfg_t *p_task_actuator_cfg;
-	task_actuator_dta_t *p_task_actuator_dta;
+	const task_actuator_analogico_cfg_t *p_task_actuator_cfg;
+	task_actuator_analogico_dta_t *p_task_actuator_dta;
 
 	for (index = 0; ACTUATOR_DTA_QTY > index; index++)
 	{
 		/* Update Task Actuator Configuration & Data Pointer */
-		p_task_actuator_cfg = &task_actuator_cfg_list[index];
-		p_task_actuator_dta = &task_actuator_dta_list[index];
+		p_task_actuator_cfg = &task_actuator_analogico_cfg_list[index];
+		p_task_actuator_dta = &task_actuator_analogico_dta_list[index];
 
 		switch (p_task_actuator_dta->state)
 		{

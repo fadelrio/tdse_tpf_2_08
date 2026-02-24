@@ -49,8 +49,6 @@
 #include "app.h"
 #include "task_system_attribute.h"
 #include "task_system_interface.h"
-#include "task_actuator_attribute.h"
-#include "task_actuator_interface.h"
 #include "control_temperatura_attribute.h"
 #include "control_temperatura_interface.h"
 #include "control_temperatura_statechart.h"
@@ -66,6 +64,8 @@
 #include "menu_attribute.h"
 #include "menu_interface.h"
 #include "menu_statechart.h"
+#include "task_actuator_digital_attribute.h"
+#include "task_actuator_digital_interface.h"
 
 /********************** macros and definitions *******************************/
 #define G_TASK_SYS_CNT_INI			0ul
@@ -82,6 +82,9 @@ typedef enum task_system_mode {CONTROL, MENU, SYSTEM_ERROR} task_system_mode_t;
 task_system_dta_t task_system_dta =
 	{DEL_SYS_MIN, ST_SYS_CONTROL, EV_SYS_NADA, false};
 
+task_system_cfg_t task_system_cfg =
+	{24.0,.5,.5,.5};
+
 
 /********************** internal functions declaration ***********************/
 void task_system_control_statechart(void);
@@ -96,6 +99,7 @@ void task_system_enable_control_queues();
 void task_system_enable_menu_queues();
 void disable_all_queues();
 void system_statechart(task_system_dta_t *p_task_system_dta);
+void task_system_get_config(task_system_cfg_t *task_system_cfg); //TODO implementar el acceso a memoria
 
 /********************** internal data definition *****************************/
 const char *p_task_system 		= "Task System (System Statechart)";
@@ -146,6 +150,8 @@ void task_system_init(void *parameters)
 				GET_NAME(state), (uint32_t)state,
 				GET_NAME(event), (uint32_t)event,
 				GET_NAME(b_event), (b_event ? "true" : "false"));
+
+	task_system_get_config(&task_system_cfg);
 
 	task_system_set_mode(CONTROL);
 	init_control_luz_statechart();
@@ -220,10 +226,10 @@ void task_system_update(void *parameters)
 
 void task_system_control_statechart(void)
 {
-	update_control_temperatura_statechart();
-	update_control_humedad_statechart();
-	update_control_riego_statechart();
-	update_control_luz_statechart();
+	update_control_temperatura_statechart(task_system_cfg);
+	update_control_humedad_statechart(task_system_cfg);
+	update_control_riego_statechart(task_system_cfg);
+	update_control_luz_statechart(task_system_cfg);
 
 	task_system_dta_t *p_task_system_dta;
 
@@ -243,7 +249,7 @@ void task_system_control_statechart(void)
 void task_system_menu_statechart(void)
 {
 
-	update_menu_statechart();
+	update_menu_statechart(&task_system_cfg);
 
 	task_system_dta_t *p_task_system_dta;
 
@@ -383,6 +389,10 @@ void system_statechart(task_system_dta_t *p_task_system_dta){
 		}
 }
 
+
+void task_system_get_config(task_system_cfg_t *task_system_cfg){
+
+}
 
 
 

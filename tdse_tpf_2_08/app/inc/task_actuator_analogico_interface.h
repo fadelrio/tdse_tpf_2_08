@@ -35,8 +35,8 @@
  * @version	v1.0.0
  */
 
-#ifndef TASK_INC_TASK_ACTUATOR_INTERFACE_H_
-#define TASK_INC_TASK_ACTUATOR_INTERFACE_H_
+#ifndef TASK_INC_TASK_ACTUATOR_ANALOGICO_INTERFACE_H_
+#define TASK_INC_TASK_ACTUATOR_ANALOGICO_INTERFACE_H_
 
 /********************** CPP guard ********************************************/
 #ifdef __cplusplus
@@ -52,7 +52,7 @@ extern "C" {
 /********************** external data declaration ****************************/
 
 /********************** external functions declaration ***********************/
-extern void put_event_task_actuator(task_actuator_ev_t event, task_actuator_id_t identifier);
+extern void put_event_task_actuator_analogico(task_actuator_analogico_ev_t event, task_actuator_analogico_id_t identifier);
 
 /********************** End of CPP guard *************************************/
 #ifdef __cplusplus
