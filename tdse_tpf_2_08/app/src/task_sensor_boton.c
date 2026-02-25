@@ -207,18 +207,32 @@ void task_sensor_statechart(void)
 
 				if (EV_BTN_XX_DOWN == p_task_sensor_dta->event)
 				{
-
-					if(p_task_sensor_cfg->btn_menu){
-						put_event_menu(p_task_sensor_cfg->signal_down_menu);
-					}else if(p_task_sensor_cfg->btn_system){
-						put_event_task_system(p_task_sensor_cfg->signal_down_system);
-					}
-					p_task_sensor_dta->state = ST_BTN_XX_DOWN;
+					p_task_sensor_dta->state = ST_BTN_XX_FALLING;
+					p_task_sensor_dta->tick = p_task_sensor_cfg->tick_max;
 				}
 
 				break;
 
 			case ST_BTN_XX_FALLING:
+				if (EV_BTN_XX_UP == p_task_sensor_dta->event){
+					if (p_task_sensor_dta->tick == 0){
+						p_task_sensor_dta->state = ST_BTN_XX_UP;
+					}else if(p_task_sensor_dta->tick > 0){
+						p_task_sensor_dta->tick--;
+					}
+				}
+				if (EV_BTN_XX_DOWN == p_task_sensor_dta->event){
+					if (p_task_sensor_dta->tick == 0){
+						p_task_sensor_dta->state = ST_BTN_XX_DOWN;
+						if(p_task_sensor_cfg->btn_menu){
+							put_event_menu(p_task_sensor_cfg->signal_down_menu);
+						}else if(p_task_sensor_cfg->btn_system){
+							put_event_task_system(p_task_sensor_cfg->signal_down_system);
+						}
+					}else if(p_task_sensor_dta->tick > 0){
+						p_task_sensor_dta->tick--;
+					}
+				}
 
 				break;
 
@@ -226,14 +240,27 @@ void task_sensor_statechart(void)
 
 				if (EV_BTN_XX_UP == p_task_sensor_dta->event)
 				{
-					put_event_task_system(p_task_sensor_cfg->signal_up);
-					p_task_sensor_dta->state = ST_BTN_XX_UP;
+					p_task_sensor_dta->state = ST_BTN_XX_RISING;
+					p_task_sensor_dta->tick = p_task_sensor_cfg->tick_max;
 				}
 
 				break;
 
 			case ST_BTN_XX_RISING:
-
+				if (EV_BTN_XX_UP == p_task_sensor_dta->event){
+					if (p_task_sensor_dta->tick == 0){
+						p_task_sensor_dta->state = ST_BTN_XX_UP;
+					}else if(p_task_sensor_dta->tick > 0){
+						p_task_sensor_dta->tick--;
+					}
+				}
+				if (EV_BTN_XX_DOWN == p_task_sensor_dta->event){
+					if (p_task_sensor_dta->tick == 0){
+						p_task_sensor_dta->state = ST_BTN_XX_DOWN;
+					}else if(p_task_sensor_dta->tick > 0){
+						p_task_sensor_dta->tick--;
+					}
+				}
 				break;
 
 			default:
