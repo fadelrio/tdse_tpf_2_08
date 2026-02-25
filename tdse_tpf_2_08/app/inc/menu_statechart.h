@@ -18,6 +18,7 @@ extern "C" {
 
 extern void init_menu_statechart(void);
 extern void update_menu_statechart(task_system_cfg_t *p_task_system_cfg);
+extern void set_up_menu_display(void);
 
 /********************** End of CPP guard *************************************/
 #ifdef __cplusplus
