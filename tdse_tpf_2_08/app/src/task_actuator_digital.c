@@ -55,7 +55,7 @@
 
 #define DEL_LED_XX_PUL				250ul
 #define DEL_LED_XX_BLI				500ul
-#define DEL_LED_XX_MIN				0ul
+#define DEL_ACT_XX_MIN				0ul
 
 /********************** internal data declaration ****************************/
 const task_actuator_digital_cfg_t task_actuator_digital_cfg_list[] = {
@@ -66,7 +66,7 @@ const task_actuator_digital_cfg_t task_actuator_digital_cfg_list[] = {
 #define ACTUATOR_CFG_QTY	(sizeof(task_actuator_digital_cfg_list)/sizeof(task_actuator_digital_cfg_t))
 
 task_actuator_digital_dta_t task_actuator_digital_dta_list[] = {
-	{DEL_LED_XX_MIN, ST_LED_XX_OFF, EV_LED_XX_NOT_BLINK, false}
+	{DEL_ACT_XX_MIN, ST_LED_XX_OFF, EV_LED_XX_NOT_BLINK, false}
 };
 
 #define ACTUATOR_DTA_QTY	(sizeof(task_actuator_digital_dta_list)/sizeof(task_actuator_digital_dta_t))
@@ -216,7 +216,7 @@ void task_actuator_digital_statechart(void)
 
 			default:
 
-				p_task_actuator_dta->tick  = DEL_LED_XX_MIN;
+				p_task_actuator_dta->tick  = DEL_ACT_XX_MIN;
 				p_task_actuator_dta->state = ST_LED_XX_OFF;
 				p_task_actuator_dta->event = EV_LED_XX_OFF;
 				p_task_actuator_dta->flag = false;

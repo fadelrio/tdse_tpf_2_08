@@ -52,7 +52,8 @@ extern "C" {
 /********************** external data declaration ****************************/
 
 /********************** external functions declaration ***********************/
-extern void put_event_task_actuator_analogico(task_actuator_analogico_ev_t event, task_actuator_analogico_id_t identifier);
+extern void pwm_on_task_actuador_analogico(task_actuator_analogico_id_t identifier, uint16_t pulse);
+extern void pwm_off_task_actuator_analogico(task_actuator_analogico_id_t identifier);
 
 /********************** End of CPP guard *************************************/
 #ifdef __cplusplus

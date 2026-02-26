@@ -60,14 +60,25 @@
 /********************** external data declaration ****************************/
 
 /********************** external functions definition ************************/
-void put_event_task_actuator_analogico(task_actuator_analogico_ev_t event, task_actuator_analogico_id_t identifier)
+void pwm_on_task_actuador_analogico(task_actuator_analogico_id_t identifier, uint16_t pulse)
 {
 	task_actuator_analogico_dta_t *p_task_actuator_dta;
 
 	p_task_actuator_dta = &task_actuator_analogico_dta_list[identifier];
 
-	p_task_actuator_dta->event = event;
+	p_task_actuator_dta->event = EV_ACT_ANALOGICO_PWM_ON;
 	p_task_actuator_dta->flag = true;
+	p_task_actuator_dta->pulse = pulse;
+}
+void pwm_off_task_actuador_analogico(task_actuator_analogico_id_t identifier)
+{
+	task_actuator_analogico_dta_t *p_task_actuator_dta;
+
+	p_task_actuator_dta = &task_actuator_analogico_dta_list[identifier];
+
+	p_task_actuator_dta->event = EV_ACT_ANALOGICO_PWM_OFF;
+	p_task_actuator_dta->flag = true;
+	p_task_actuator_dta->pulse = 0;
 }
 
 /********************** end of file ******************************************/

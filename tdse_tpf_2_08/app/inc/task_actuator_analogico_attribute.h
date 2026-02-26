@@ -94,31 +94,21 @@ extern "C" {
  * 	------------------------+-----------------------+-----------------------+-----------------------+------------------------ */
 
 /* Events to excite Task Actuator */
-typedef enum task_actuator_analogico_ev {EV_LED_XX_OFF,
-							   EV_LED_XX_ON,
-							   EV_LED_XX_NOT_BLINK,
-							   EV_LED_XX_BLINK,
-							   EV_LED_XX_PULSE} task_actuator_analogico_ev_t;
+typedef enum task_actuator_analogico_ev {EV_ACT_ANALOGICO_NADA,
+							   EV_ACT_ANALOGICO_PWM_ON, EV_ACT_ANALOGICO_PWM_OFF} task_actuator_analogico_ev_t;
 
 /* States of Task Actuator */
-typedef enum task_actuator_analogico_st {ST_LED_XX_OFF,
-							   ST_LED_XX_ON,
-							   ST_LED_XX_BLINK_ON,
-							   ST_LED_XX_BLINK_OFF,
-							   ST_LED_XX_PULSE} task_actuator_analogico_st_t;
+typedef enum task_actuator_analogico_st {ST_ACT_ANALOGICO_OFF,ST_ACT_ANALOGICO_ON} task_actuator_analogico_st_t;
 
 /* Identifier of Task Actuator */
-typedef enum task_actuator_analogico_id {ID_LED_A} task_actuator_analogico_id_t;
+typedef enum task_actuator_analogico_id {ID_PWM_LED, ID_PWM_HEATER} task_actuator_analogico_id_t;
 
 typedef struct
 {
 	task_actuator_analogico_id_t	identifier;
-	GPIO_TypeDef *		gpio_port;
-	uint16_t			pin;
-	GPIO_PinState		led_on;
-	GPIO_PinState		led_off;
-	uint32_t			tick_blink;
-	uint32_t			tick_pulse;
+	TIM_HandleTypeDef	*handler;
+	uint32_t 			channel;
+	uint16_t			period;
 } task_actuator_analogico_cfg_t;
 
 typedef struct
@@ -126,6 +116,7 @@ typedef struct
 	uint32_t			tick;
 	task_actuator_analogico_st_t	state;
 	task_actuator_analogico_ev_t	event;
+	uint16_t						pulse;
 	bool				flag;
 } task_actuator_analogico_dta_t;
 

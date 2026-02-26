@@ -55,24 +55,33 @@
 
 #define DEL_LED_XX_PUL				250ul
 #define DEL_LED_XX_BLI				500ul
-#define DEL_LED_XX_MIN				0ul
+#define DEL_ACT_XX_MIN				0ul
+#define PERIOD						0xFFFF
 
 /********************** internal data declaration ****************************/
+
+
+extern TIM_HandleTypeDef htim2;
+extern TIM_HandleTypeDef htim3;
+
 const task_actuator_analogico_cfg_t task_actuator_analogico_cfg_list[] = {
-	{ID_LED_A,  LED_A_PORT,  LED_A_PIN, LED_A_ON,  LED_A_OFF,
-	 DEL_LED_XX_BLI, DEL_LED_XX_PUL}
+	{ID_PWM_LED, &htim2, TIM_CHANNEL_1, PERIOD},
+	{ID_PWM_HEATER, &htim3, TIM_CHANNEL_2, PERIOD}
 };
 
 #define ACTUATOR_CFG_QTY	(sizeof(task_actuator_analogico_cfg_list)/sizeof(task_actuator_analogico_cfg_t))
 
 task_actuator_analogico_dta_t task_actuator_analogico_dta_list[] = {
-	{DEL_LED_XX_MIN, ST_LED_XX_OFF, EV_LED_XX_NOT_BLINK, false}
+	{DEL_ACT_XX_MIN, ST_ACT_ANALOGICO_OFF, EV_ACT_ANALOGICO_NADA, 0, false},
+	{DEL_ACT_XX_MIN, ST_ACT_ANALOGICO_OFF, EV_ACT_ANALOGICO_NADA, 0, false}
 };
 
 #define ACTUATOR_DTA_QTY	(sizeof(task_actuator_analogico_dta_list)/sizeof(task_actuator_analogico_dta_t))
 
 /********************** internal functions declaration ***********************/
 void task_actuator_analogico_statechart(void);
+void setPWM(TIM_HandleTypeDef *timer, uint32_t channel,
+            uint16_t period, uint16_t pulse);
 
 /********************** internal data definition *****************************/
 const char *p_task_actuator_analogico 		= "Task Actuator (Actuator Statechart)";
@@ -86,7 +95,6 @@ volatile uint32_t g_task_actuator_analogico_tick_cnt;
 void task_actuator_analogico_init(void *parameters)
 {
 	uint32_t index;
-	const task_actuator_analogico_cfg_t *p_task_actuator_cfg;
 	task_actuator_analogico_dta_t *p_task_actuator_dta;
 	task_actuator_analogico_st_t state;
 	task_actuator_analogico_ev_t event;
@@ -104,14 +112,13 @@ void task_actuator_analogico_init(void *parameters)
 	for (index = 0; ACTUATOR_DTA_QTY > index; index++)
 	{
 		/* Update Task Actuator Configuration & Data Pointer */
-		p_task_actuator_cfg = &task_actuator_analogico_cfg_list[index];
 		p_task_actuator_dta = &task_actuator_analogico_dta_list[index];
 
 		/* Init & Print out: Index & Task execution FSM */
-		state = ST_LED_XX_OFF;
+		state = ST_ACT_ANALOGICO_OFF;
 		p_task_actuator_dta->state = state;
 
-		event = EV_LED_XX_OFF;
+		event = EV_ACT_ANALOGICO_NADA;
 		p_task_actuator_dta->event = event;
 
 		b_event = false;
@@ -123,8 +130,6 @@ void task_actuator_analogico_init(void *parameters)
 					 GET_NAME(state), (uint32_t)state,
 					 GET_NAME(event), (uint32_t)event,
 					 GET_NAME(b_event), (b_event ? "true" : "false"));
-
-		HAL_GPIO_WritePin(p_task_actuator_cfg->gpio_port, p_task_actuator_cfg->pin, p_task_actuator_cfg->led_off);
 	}
 }
 
@@ -180,50 +185,55 @@ void task_actuator_analogico_statechart(void)
 
 		switch (p_task_actuator_dta->state)
 		{
-			case ST_LED_XX_OFF:
-
-				if ((true == p_task_actuator_dta->flag) && (EV_LED_XX_ON == p_task_actuator_dta->event))
-				{
+			case ST_ACT_ANALOGICO_OFF:
+				if(p_task_actuator_dta->flag){
+					if(p_task_actuator_dta->event == EV_ACT_ANALOGICO_PWM_ON){
+						p_task_actuator_dta->state = ST_ACT_ANALOGICO_ON;
+						setPWM(p_task_actuator_cfg->handler, p_task_actuator_cfg->channel, p_task_actuator_cfg->period, p_task_actuator_dta->pulse);
+					}
 					p_task_actuator_dta->flag = false;
-					HAL_GPIO_WritePin(p_task_actuator_cfg->gpio_port, p_task_actuator_cfg->pin, p_task_actuator_cfg->led_on);
-					p_task_actuator_dta->state = ST_LED_XX_ON;
 				}
 
 				break;
-
-			case ST_LED_XX_ON:
-
-				if ((true == p_task_actuator_dta->flag) && (EV_LED_XX_OFF == p_task_actuator_dta->event))
-				{
+			case ST_ACT_ANALOGICO_ON:
+				if(p_task_actuator_dta->flag){
+					if(p_task_actuator_dta->event == EV_ACT_ANALOGICO_PWM_OFF){
+						p_task_actuator_dta->state = ST_ACT_ANALOGICO_OFF;
+						setPWM(p_task_actuator_cfg->handler, p_task_actuator_cfg->channel, p_task_actuator_cfg->period, p_task_actuator_dta->pulse);
+					}
 					p_task_actuator_dta->flag = false;
-					HAL_GPIO_WritePin(p_task_actuator_cfg->gpio_port, p_task_actuator_cfg->pin, p_task_actuator_cfg->led_off);
-					p_task_actuator_dta->state = ST_LED_XX_OFF;
 				}
-
 				break;
 
-			case ST_LED_XX_BLINK_ON:
-
-				break;
-
-			case ST_LED_XX_BLINK_OFF:
-
-				break;
-
-			case ST_LED_XX_PULSE:
-
-				break;
 
 			default:
 
-				p_task_actuator_dta->tick  = DEL_LED_XX_MIN;
-				p_task_actuator_dta->state = ST_LED_XX_OFF;
-				p_task_actuator_dta->event = EV_LED_XX_OFF;
+				p_task_actuator_dta->tick  = DEL_ACT_XX_MIN;
+				p_task_actuator_dta->state = ST_ACT_ANALOGICO_OFF;
+				p_task_actuator_dta->event = EV_ACT_ANALOGICO_NADA;
 				p_task_actuator_dta->flag = false;
+				p_task_actuator_dta->pulse = 0;
 
 				break;
 		}
 	}
 }
+
+void setPWM(TIM_HandleTypeDef *timer, uint32_t channel,
+            uint16_t period, uint16_t pulse) {
+  HAL_TIM_PWM_Stop(timer, channel);
+  TIM_OC_InitTypeDef sConfigOC;
+  timer->Init.Period = period;
+  HAL_TIM_PWM_Init(timer);
+
+  sConfigOC.OCMode = TIM_OCMODE_PWM1;
+  sConfigOC.Pulse = pulse;
+  sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
+  sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
+  HAL_TIM_PWM_ConfigChannel(timer, &sConfigOC, channel);
+  HAL_TIM_PWM_Start(timer,channel);
+}
+
+
 
 /********************** end of file ******************************************/
