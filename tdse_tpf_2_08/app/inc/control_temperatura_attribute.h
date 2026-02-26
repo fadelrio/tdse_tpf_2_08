@@ -19,10 +19,11 @@ typedef enum control_temperatura_st {NADA_TEMP,CHECK_TEMP,ENFRIAR,SENSE_FRIO,CAL
 
 typedef struct
 {
-	uint32_t			tick;
+	uint32_t					tick;
 	control_temperatura_st_t	state;
 	control_temperatura_ev_t	event;
-	bool				flag;
+	float 						temperatura;
+	bool						flag;
 } control_temperatura_dta_t;
 
 /********************** external data declaration ****************************/

@@ -48,32 +48,66 @@
 #include "app.h"
 #include "task_system_attribute.h"
 #include "task_system_interface.h"
+#include "control_temperatura_attribute.h"
+#include "control_humedad_attribute.h"
+#include "control_temperatura_interface.h"
+#include "control_humedad_interface.h"
 #include "task_sensor_digital_attribute.h"
 #include "task_sensor_digital_interface.h"
+#include "control_temperatura_attribute.h"
+#include "control_humedad_attribute.h"
+#include "control_temperatura_interface.h"
+#include "control_humedad_interface.h"
 
 /********************** macros and definitions *******************************/
 #define G_TASK_SEN_CNT_INIT			0ul
 #define G_TASK_SEN_TICK_CNT_INI		0ul
 
-#define DEL_BTN_XX_MIN				0ul
-#define DEL_BTN_XX_MED				25ul
-#define DEL_BTN_XX_MAX				50ul
+#define DEL_I2C_XX_MIN				0ul
+#define DEL_I2C_XX_MED				25ul
+#define DEL_I2C_XX_MAX				50ul
+
+#define SHT30_ADDRESS 0x45
+
+/********************** external data declaration ****************************/
+extern I2C_HandleTypeDef hi2c1;
 
 /********************** internal data declaration ****************************/
 const task_sensor_digital_cfg_t task_sensor_digital_cfg_list[] = {
-	{ID_BTN_A,  BTN_A_PORT,  BTN_A_PIN,  BTN_A_PRESSED, DEL_BTN_XX_MAX}
+		{ID_SHT30, SHT30_ADDRESS << 1u, &hi2c1, DEL_I2C_XX_MAX,
+				SENSE_HUM_READY, SENSE_TEMP_READY}
 };
 
 #define SENSOR_CFG_QTY	(sizeof(task_sensor_cfg_list)/sizeof(task_sensor_cfg_t))
 
 task_sensor_digital_dta_t task_sensor_digital_dta_list[] = {
-	{DEL_BTN_XX_MIN, ST_IDLE_SENSOR, NADA_SENSOR, false}
+		{DEL_I2C_XX_MIN, ST_SENSOR_DIGITAL_IDLE, EV_NADA_SENSOR_DIGITAL}
 };
 
 #define SENSOR_DTA_QTY	(sizeof(task_sensor_digital_dta_list)/sizeof(task_sensor_digital_dta_t))
 
+uint8_t command_buffer[2];
+
+uint8_t rx_buffer[6];
+
+
+typedef enum
+{
+	SHT3X_COMMAND_MEASURE_HIGHREP_STRETCH = 0x2c06,
+	SHT3X_COMMAND_CLEAR_STATUS = 0x3041,
+	SHT3X_COMMAND_SOFT_RESET = 0x30A2,
+	SHT3X_COMMAND_HEATER_ENABLE = 0x306d,
+	SHT3X_COMMAND_HEATER_DISABLE = 0x3066,
+	SHT3X_COMMAND_READ_STATUS = 0xf32d,
+	SHT3X_COMMAND_FETCH_DATA = 0xe000,
+	SHT3X_COMMAND_MEASURE_HIGHREP_10HZ = 0x2737,
+	SHT3X_COMMAND_MEASURE_LOWREP_10HZ = 0x272a
+} sht3x_command_t;
+
 /********************** internal functions declaration ***********************/
 void task_sensor_digital_statechart(void);
+static uint8_t calculate_crc(const uint8_t *data, size_t length);
+static uint16_t uint8_to_uint16(uint8_t msb, uint8_t lsb);
 
 /********************** internal data definition *****************************/
 const char *p_task_sensor_digital 		= "Task Sensor Digital (Sensor digital Statechart)";
@@ -106,10 +140,10 @@ void task_sensor_digital_init(void *parameters)
 		p_task_sensor_dta = &task_sensor_digital_dta_list[index];
 
 		/* Init & Print out: Index & Task execution FSM */
-		state = ST_IDLE_SENSOR;
+		state = ST_SENSOR_DIGITAL_IDLE;
 		p_task_sensor_dta->state = state;
 
-		event = NADA_SENSOR;
+		event = EV_NADA_SENSOR_DIGITAL;
 		p_task_sensor_dta->event = event;
 
 		LOGGER_INFO(" ");
@@ -161,7 +195,7 @@ void task_sensor_digital_update(void *parameters)
 void task_sensor_digital_statechart(void)
 {
 	uint32_t index;
-	const task_sensor_digital_cfg_t *p_task_sensor_cfg;//TODO en algun momento hay que usarlo
+	const task_sensor_digital_cfg_t *p_task_sensor_cfg;
 	task_sensor_digital_dta_t *p_task_sensor_dta;
 
 	for (index = 0; SENSOR_DTA_QTY > index; index++)
@@ -178,12 +212,97 @@ void task_sensor_digital_statechart(void)
 
 		switch (p_task_sensor_dta->state)
 		{
-			case ST_IDLE_SENSOR:
+			case ST_SENSOR_DIGITAL_IDLE:
+				if (p_task_sensor_dta->flag == true){
+					if(p_task_sensor_dta->event == EV_START_MEASUREMENT_DIGITAL){
+						p_task_sensor_dta->state = ST_SENSOR_DIGITAL_SEND_DIRECTIVE;
+						command_buffer[0] = (SHT3X_COMMAND_MEASURE_HIGHREP_STRETCH & 0xff00u) >> 8u;
+						command_buffer[1] = SHT3X_COMMAND_MEASURE_HIGHREP_STRETCH & 0xffu;
+						if(HAL_I2C_Master_Transmit_IT(p_task_sensor_cfg->i2c_handler, p_task_sensor_cfg->address, command_buffer, sizeof(command_buffer)) != HAL_OK){
+							Error_Handler();
+						}
+					}
+
+					p_task_sensor_dta->flag = false;
+				}
 
 				break;
 
+			case ST_SENSOR_DIGITAL_SEND_DIRECTIVE:
+				if (HAL_I2C_GetState(p_task_sensor_cfg->i2c_handler) == HAL_I2C_STATE_READY){
+					if(HAL_I2C_GetError(p_task_sensor_cfg->i2c_handler) != HAL_I2C_ERROR_AF){
+						p_task_sensor_dta->state = ST_SENSOR_DIGITAL_READ_VALUE;
+						if(HAL_I2C_Master_Receive_IT(p_task_sensor_cfg->i2c_handler, p_task_sensor_cfg->address, (uint8_t *)rx_buffer, sizeof(rx_buffer)) != HAL_OK){
+							  Error_Handler();
+							}
+					}else {
+						command_buffer[0] = (SHT3X_COMMAND_MEASURE_HIGHREP_STRETCH & 0xff00u) >> 8u;
+						command_buffer[1] = SHT3X_COMMAND_MEASURE_HIGHREP_STRETCH & 0xffu;
+						if(HAL_I2C_Master_Transmit_IT(p_task_sensor_cfg->i2c_handler, p_task_sensor_cfg->address, command_buffer, sizeof(command_buffer)) != HAL_OK){
+							Error_Handler();
+						}
+					}
+				}
+				p_task_sensor_dta->flag = false;
+				break;
+
+			case ST_SENSOR_DIGITAL_READ_VALUE:
+				if (HAL_I2C_GetState(p_task_sensor_cfg->i2c_handler) == HAL_I2C_STATE_READY){
+					if(HAL_I2C_GetError(p_task_sensor_cfg->i2c_handler) != HAL_I2C_ERROR_AF){
+						uint8_t temperature_crc = calculate_crc(rx_buffer, 2);
+						uint8_t humidity_crc = calculate_crc(rx_buffer + 3, 2);
+						if (temperature_crc != rx_buffer[2] || humidity_crc != rx_buffer[5]) {
+							p_task_sensor_dta->state = ST_SENSOR_DIGITAL_IDLE;
+							put_event_task_sensor_digital(EV_START_MEASUREMENT_DIGITAL);
+						}else {
+							uint16_t temperature_raw = uint8_to_uint16(rx_buffer[0], rx_buffer[1]);
+							uint16_t humidity_raw = uint8_to_uint16(rx_buffer[3], rx_buffer[4]);
+							set_temperature_measure(-45.0f + 175.0f * (float)temperature_raw / 65535.0f);
+							set_humidity_measure(100.0f * (float)humidity_raw / 65535.0f);
+							put_event_control_humedad(p_task_sensor_cfg->ev_humedad_ready);
+							put_event_control_temperatura(p_task_sensor_cfg->ev_temperatura_ready);
+							p_task_sensor_dta->state = ST_SENSOR_DIGITAL_IDLE;
+						}
+					}else {
+						if(HAL_I2C_Master_Receive_IT(p_task_sensor_cfg->i2c_handler, p_task_sensor_cfg->address, (uint8_t *)rx_buffer, sizeof(rx_buffer)) != HAL_OK){
+							Error_Handler();
+						}
+					}
+				}
+				p_task_sensor_dta->flag = false;
+				break;
+
+			default:
+
+				p_task_sensor_dta->tick  = DEL_I2C_XX_MIN;
+				p_task_sensor_dta->state = ST_SENSOR_DIGITAL_IDLE;
+				p_task_sensor_dta->event = EV_NADA_SENSOR_DIGITAL;
+
+				break;
 		}
 	}
+}
+
+static uint8_t calculate_crc(const uint8_t *data, size_t length)
+{
+	uint8_t crc = 0xff;
+	for (size_t i = 0; i < length; i++) {
+		crc ^= data[i];
+		for (size_t j = 0; j < 8; j++) {
+			if ((crc & 0x80u) != 0) {
+				crc = (uint8_t)((uint8_t)(crc << 1u) ^ 0x31u);
+			} else {
+				crc <<= 1u;
+			}
+		}
+	}
+	return crc;
+
+}
+
+static uint16_t uint8_to_uint16(uint8_t msb, uint8_t lsb)
+{
+	return (uint16_t)((uint16_t)msb << 8u) | lsb;
 }
 
 /********************** end of file ******************************************/

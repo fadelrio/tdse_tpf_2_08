@@ -44,27 +44,31 @@ extern "C" {
 #endif
 
 /********************** inclusions *******************************************/
-
+#include "control_temperatura_attribute.h"
+#include "control_humedad_attribute.h"
 /********************** macros ***********************************************/
 
 /********************** typedef **********************************************/
 
 /* Events to excite Task Sensor */
-typedef enum task_sensor_digital_ev {NADA_SENSOR/*TODO completar*/} task_sensor_digital_ev_t;
+typedef enum task_sensor_digital_ev {EV_START_MEASUREMENT_DIGITAL,EV_NADA_SENSOR_DIGITAL} task_sensor_digital_ev_t;
 
 /* States of Task Sensor */
-typedef enum task_sensor_digital_st {ST_IDLE_SENSOR/*TODO completar*/} task_sensor_digital_st_t;
+typedef enum task_sensor_digital_st {ST_SENSOR_DIGITAL_IDLE,
+	ST_SENSOR_DIGITAL_SEND_DIRECTIVE,
+	ST_SENSOR_DIGITAL_READ_VALUE} task_sensor_digital_st_t;
 
 /* Identifier of Task Sensor */
-typedef enum task_sensor_digital_id {ID_BTN_A} task_sensor_digital_id_t;
+typedef enum task_sensor_digital_id {ID_SHT30} task_sensor_digital_id_t;
 
 typedef struct
 {
 	task_sensor_digital_id_t	identifier;
-	GPIO_TypeDef *		gpio_port;
-	uint16_t			pin;
-	GPIO_PinState		pressed;
+	uint16_t 			address;
+	I2C_HandleTypeDef *i2c_handler;
 	uint32_t			tick_max;
+	control_humedad_ev_t ev_humedad_ready;
+	control_temperatura_ev_t ev_temperatura_ready;
 } task_sensor_digital_cfg_t;
 
 typedef struct
@@ -72,11 +76,11 @@ typedef struct
 	uint32_t			tick;
 	task_sensor_digital_st_t	state;
 	task_sensor_digital_ev_t	event;
-	bool flag;
+	bool 				flag;
 } task_sensor_digital_dta_t;
 
 /********************** external data declaration ****************************/
-extern task_sensor_digital_dta_t task_sensor_boton_dta_list[];
+extern task_sensor_digital_dta_t task_sensor_digital_dta_list[];
 
 /********************** external functions declaration ***********************/
 
