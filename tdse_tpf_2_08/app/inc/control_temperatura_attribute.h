@@ -23,6 +23,8 @@ typedef struct
 	control_temperatura_st_t	state;
 	control_temperatura_ev_t	event;
 	float 						temperatura;
+	float						temperatura_ant;
+	uint32_t					error_cnt;
 	bool						flag;
 } control_temperatura_dta_t;
 

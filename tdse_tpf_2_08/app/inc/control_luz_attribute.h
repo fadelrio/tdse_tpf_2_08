@@ -21,6 +21,8 @@ typedef struct
 	uint32_t			tick;
 	control_luz_st_t	state;
 	control_luz_ev_t	event;
+	uint32_t			luz;
+	uint32_t			estado_led;
 	bool				flag;
 } control_luz_dta_t;
 

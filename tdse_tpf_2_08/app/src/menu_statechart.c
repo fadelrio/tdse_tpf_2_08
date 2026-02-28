@@ -195,7 +195,7 @@ void update_menu_statechart(task_system_cfg_t *p_task_system_cfg){
 					p_menu_dta->state = RIEGO_MENU;
 					displayCharPositionWrite(0,0);
 					displayStringWrite("      RIEGO     ");
-					displayWriteValue(p_task_system_cfg->r_0);
+					displayWriteValue(p_task_system_cfg->r_0);//TODO IMPORTANTE mapear del valor crudo que usamos nosotros a uno porcentual para el display
 				}
 				p_menu_dta->flag = false;
 			}

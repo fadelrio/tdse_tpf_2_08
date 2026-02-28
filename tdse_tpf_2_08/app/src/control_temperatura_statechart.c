@@ -9,6 +9,7 @@
 #include "control_temperatura_interface.h"
 #include "task_sensor_digital_attribute.h"
 #include "task_sensor_digital_interface.h"
+#include "task_system_interface.h"
 /********************** macros ***********************************************/
 
 #define G_TASK_SYS_CNT_INI			0ul
@@ -17,12 +18,18 @@
 #define DEL_SYS_MIN					0ul
 #define DEL_SYS_MED					50ul
 #define DEL_SYS_MAX					500ul
-#define delta                       0ul
+#define DELTA                       0ul
 #define TIMER_CAMB_TEMP             10ul
 #define TIMER_TEMP                  5ul
+
+#define CONTROL_TEMPERATURA_ERROR_CNT_MAX 5
 /********************** typedef **********************************************/
 
-control_temperatura_dta_t control_temperatura_dta = {DEL_SYS_MIN, NADA_TEMP, IDLE_TEMP, 0, false};
+void check_error_calor();
+
+void check_error_frio();
+
+control_temperatura_dta_t control_temperatura_dta = {DEL_SYS_MIN, NADA_TEMP, IDLE_TEMP, 0, 0, 0, false};
 
 void init_control_temperatura_statechart(){
 
@@ -62,11 +69,12 @@ void update_control_temperatura_statechart(const task_system_cfg_t p_task_system
 	}
 	case CHECK_TEMP:{
 		if (p_control_temperatura_dta->flag && (p_control_temperatura_dta->event == SENSE_TEMP_READY)){
+			p_control_temperatura_dta->temperatura_ant = p_control_temperatura_dta->temperatura;
 			p_control_temperatura_dta->temperatura = get_temperature_measure();
-			if (p_control_temperatura_dta->temperatura > p_task_system_cfg.t_0 + delta){
+			if (p_control_temperatura_dta->temperatura > p_task_system_cfg.t_0 + DELTA){
 				p_control_temperatura_dta->state = ENFRIAR;
 				p_control_temperatura_dta->tick = TIMER_CAMB_TEMP;
-			}else if(p_control_temperatura_dta->temperatura < p_task_system_cfg.t_0 - delta){
+			}else if(p_control_temperatura_dta->temperatura < p_task_system_cfg.t_0 - DELTA){
 				p_control_temperatura_dta->state = CALENTAR;
 				p_control_temperatura_dta->tick =TIMER_CAMB_TEMP;
 			}else{
@@ -100,15 +108,20 @@ void update_control_temperatura_statechart(const task_system_cfg_t p_task_system
 	}
 	case SENSE_FRIO:{
 		if(p_control_temperatura_dta->flag && (p_control_temperatura_dta->event == SENSE_TEMP_READY)){
+			p_control_temperatura_dta->temperatura_ant = p_control_temperatura_dta->temperatura;
 			p_control_temperatura_dta->temperatura = get_temperature_measure();
-			if (p_control_temperatura_dta->temperatura < p_task_system_cfg.t_0 +delta){
+			if (p_control_temperatura_dta->temperatura < p_task_system_cfg.t_0 +DELTA){
 				p_control_temperatura_dta->state = CHECK_TEMP;
 				put_event_task_sensor_digital(EV_START_MEASUREMENT_DIGITAL);
-				//check_error_temp();TODO
-			}else if(p_control_temperatura_dta->temperatura > p_task_system_cfg.t_0 + delta){
+#ifndef TEST_0
+					check_error_frio();
+#endif
+			}else if(p_control_temperatura_dta->temperatura > p_task_system_cfg.t_0 + DELTA){
 				p_control_temperatura_dta->state = ENFRIAR;
 				p_control_temperatura_dta->tick = TIMER_CAMB_TEMP;
-				//check_error_temp();TODO
+#ifndef TEST_0
+					check_error_frio();
+#endif
 			}
 		}
 		p_control_temperatura_dta->flag= false;
@@ -139,15 +152,20 @@ void update_control_temperatura_statechart(const task_system_cfg_t p_task_system
 	{
 		if(p_control_temperatura_dta->flag){
 			if(p_control_temperatura_dta->event == SENSE_TEMP_READY){
+				p_control_temperatura_dta->temperatura_ant = p_control_temperatura_dta->temperatura;
 				p_control_temperatura_dta->temperatura = get_temperature_measure();
-				if(p_control_temperatura_dta->temperatura > p_task_system_cfg.t_0 - delta){
+				if(p_control_temperatura_dta->temperatura > p_task_system_cfg.t_0 - DELTA){
 					p_control_temperatura_dta->state = CHECK_TEMP;
 					put_event_task_sensor_digital(EV_START_MEASUREMENT_DIGITAL);
-					//check_error_temp();TODO
-				}else if(p_control_temperatura_dta->temperatura < p_task_system_cfg.t_0 - delta){
+#ifndef TEST_0
+					check_error_calor();
+#endif
+					}else if(p_control_temperatura_dta->temperatura < p_task_system_cfg.t_0 - DELTA){
 					p_control_temperatura_dta->state = CALENTAR;
 					p_control_temperatura_dta->tick = TIMER_CAMB_TEMP;
-					//check_error_temp();TODO
+#ifndef TEST_0
+					check_error_calor();
+#endif
 				}
 			}
 		}
@@ -158,5 +176,35 @@ void update_control_temperatura_statechart(const task_system_cfg_t p_task_system
 		p_control_temperatura_dta->state = NADA_TEMP; // TODO: ver qué caso poner acá igual esto no es seguro
 		break;
 	}
+	}
+}
+
+void check_error_calor(){
+	//asumimos que el comportamiento esperado es creciente
+	control_temperatura_dta_t *p_control_temperatura_dta = &control_temperatura_dta;
+	if ((p_control_temperatura_dta->temperatura - p_control_temperatura_dta->temperatura_ant) > 0 + DELTA){
+		p_control_temperatura_dta->error_cnt = 0;
+		return;
+	}else{
+		p_control_temperatura_dta->error_cnt++;
+		if (p_control_temperatura_dta->error_cnt == CONTROL_TEMPERATURA_ERROR_CNT_MAX){
+			put_event_task_system(EV_SYS_ERROR);
+		}
+		return;
+	}
+}
+
+void check_error_frio(){
+	//asumimos que el comportamiento esperado es creciente
+	control_temperatura_dta_t *p_control_temperatura_dta = &control_temperatura_dta;
+	if ((p_control_temperatura_dta->temperatura - p_control_temperatura_dta->temperatura_ant) < 0 - DELTA){
+		p_control_temperatura_dta->error_cnt = 0;
+		return;
+	}else{
+		p_control_temperatura_dta->error_cnt++;
+		if (p_control_temperatura_dta->error_cnt == CONTROL_TEMPERATURA_ERROR_CNT_MAX){
+			put_event_task_system(EV_SYS_ERROR);
+		}
+		return;
 	}
 }

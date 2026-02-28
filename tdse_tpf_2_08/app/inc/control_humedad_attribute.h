@@ -22,7 +22,9 @@ typedef struct
 	control_humedad_st_t	state;
 	control_humedad_ev_t	event;
 	bool				flag;
-	float				humedad; //TODO corregir tipo de dato segun corresponda
+	float				humedad;
+	float 				humedad_ant;//TODO corregir tipo de dato segun corresponda
+	uint32_t			error_cnt;
 } control_humedad_dta_t;
 
 /********************** external data declaration ****************************/

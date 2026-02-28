@@ -21,6 +21,9 @@ typedef struct
 	uint32_t			tick;
 	control_riego_st_t	state;
 	control_riego_ev_t	event;
+	uint32_t				riego;
+	uint32_t				riego_ant;
+	uint32_t				error_cnt;
 	bool				flag;
 } control_riego_dta_t;
 
