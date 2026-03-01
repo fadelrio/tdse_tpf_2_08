@@ -23,7 +23,7 @@ typedef struct
 	control_humedad_ev_t	event;
 	bool				flag;
 	float				humedad;
-	float 				humedad_ant;//TODO corregir tipo de dato segun corresponda
+	float 				humedad_ant;
 	uint32_t			error_cnt;
 } control_humedad_dta_t;
 

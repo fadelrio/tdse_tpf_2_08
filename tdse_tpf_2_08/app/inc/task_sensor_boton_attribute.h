@@ -94,7 +94,7 @@ typedef enum task_sensor_boton_st {ST_BTN_XX_UP,
 						     ST_BTN_XX_RISING} task_sensor_boton_st_t;
 
 /* Identifier of Task Sensor */
-typedef enum task_sensor_boton_id {ID_BTN_ENTER, ID_BTN_UP, ID_BTN_DOWN, ID_BTN_ESCAPE, ID_BTN_TOGGLE_MENU} task_sensor_boton_id_t;
+typedef enum task_sensor_boton_id {ID_BTN_ENTER, ID_BTN_UP, ID_BTN_DOWN, ID_BTN_ESCAPE, ID_BTN_TOGGLE_MENU, ID_BTN_NEXT} task_sensor_boton_id_t;
 
 typedef struct
 {

@@ -76,6 +76,8 @@ void Error_Handler(void);
 #define D9_GPIO_Port GPIOB
 #define D5_Pin GPIO_PIN_6
 #define D5_GPIO_Port GPIOC
+#define BTN_NEXT_Pin GPIO_PIN_7
+#define BTN_NEXT_GPIO_Port GPIOC
 #define D4_Pin GPIO_PIN_8
 #define D4_GPIO_Port GPIOC
 #define BTN_TOGGLE_MENU_Pin GPIO_PIN_8

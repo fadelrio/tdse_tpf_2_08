@@ -66,6 +66,7 @@
 #include "menu_statechart.h"
 #include "task_actuator_digital_attribute.h"
 #include "task_actuator_digital_interface.h"
+#include "display.h"
 
 /********************** macros and definitions *******************************/
 #define G_TASK_SYS_CNT_INI			0ul
@@ -159,6 +160,7 @@ void task_system_init(void *parameters)
 	init_control_humedad_statechart();
 	init_control_riego_statechart();
 	init_menu_statechart();
+	displayInit(DISPLAY_CONNECTION_GPIO_4BITS);
 }
 
 void task_system_update(void *parameters)

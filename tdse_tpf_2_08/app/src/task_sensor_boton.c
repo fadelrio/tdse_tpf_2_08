@@ -72,7 +72,9 @@ const task_sensor_boton_cfg_t task_sensor_cfg_list[] = {
 	{ID_BTN_ESCAPE,  BTN_ESCAPE_GPIO_Port,  BTN_ESCAPE_Pin,  BTN_A_PRESSED, DEL_BTN_XX_MAX,
 				EV_BTN_XX_UP,  ESCAPE, true, EV_SYS_NADA, false},
 	{ID_BTN_TOGGLE_MENU,  BTN_TOGGLE_MENU_GPIO_Port,  BTN_TOGGLE_MENU_Pin,  BTN_A_PRESSED, DEL_BTN_XX_MAX,
-				EV_BTN_XX_UP,  ESCAPE, false, EV_SYS_TOGGLE_MENU, true}
+				EV_BTN_XX_UP,  ESCAPE, false, EV_SYS_TOGGLE_MENU, true},
+	{ID_BTN_NEXT,  BTN_NEXT_GPIO_Port,  BTN_NEXT_Pin,  BTN_A_PRESSED, DEL_BTN_XX_MAX,
+				EV_BTN_XX_UP,  NEXT, true, EV_SYS_NADA, false}
 };
 
 #define SENSOR_CFG_QTY	(sizeof(task_sensor_boton_cfg_list)/sizeof(task_sensor_boton_cfg_t))

@@ -173,7 +173,7 @@ void update_control_temperatura_statechart(const task_system_cfg_t p_task_system
 		break;
 	}
 	default:{
-		p_control_temperatura_dta->state = NADA_TEMP; // TODO: ver qué caso poner acá igual esto no es seguro
+		p_control_temperatura_dta->state = NADA_TEMP;
 		break;
 	}
 	}
