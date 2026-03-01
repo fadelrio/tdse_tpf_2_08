@@ -29,66 +29,56 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @file   : task_sensor_attribute.h
+ *
+ * @file   : task_actuator_interface.c
  * @date   : Set 26, 2023
  * @author : Juan Manuel Cruz <jcruz@fi.uba.ar> <jcruz@frba.utn.edu.ar>
  * @version	v1.0.0
  */
 
-#ifndef TASK_INC_TASK_SENSOR_DIGITAL_ATTRIBUTE_H_
-#define TASK_INC_TASK_SENSOR_DIGITAL_ATTRIBUTE_H_
-
-/********************** CPP guard ********************************************/
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /********************** inclusions *******************************************/
-#include "control_temperatura_attribute.h"
-#include "control_humedad_attribute.h"
-/********************** macros ***********************************************/
+/* Project includes */
+#include "main.h"
 
-/********************** typedef **********************************************/
+/* Demo includes */
+#include "logger.h"
+#include "dwt.h"
 
-/* Events to excite Task Sensor */
-typedef enum task_sensor_digital_ev {EV_START_MEASUREMENT_DIGITAL,EV_NADA_SENSOR_DIGITAL} task_sensor_digital_ev_t;
+/* Application & Tasks includes */
+#include "board.h"
+#include "app.h"
+#include "actuators/task_actuator_analogico_attribute.h"
 
-/* States of Task Sensor */
-typedef enum task_sensor_digital_st {ST_SENSOR_DIGITAL_IDLE,
-	ST_SENSOR_DIGITAL_SEND_DIRECTIVE,
-	ST_SENSOR_DIGITAL_READ_VALUE} task_sensor_digital_st_t;
+/********************** macros and definitions *******************************/
 
-/* Identifier of Task Sensor */
-typedef enum task_sensor_digital_id {ID_SHT30} task_sensor_digital_id_t;
+/********************** internal data declaration ****************************/
 
-typedef struct
-{
-	task_sensor_digital_id_t	identifier;
-	uint16_t 			address;
-	I2C_HandleTypeDef *i2c_handler;
-	uint32_t			tick_max;
-	control_humedad_ev_t ev_humedad_ready;
-	control_temperatura_ev_t ev_temperatura_ready;
-} task_sensor_digital_cfg_t;
+/********************** internal functions declaration ***********************/
 
-typedef struct
-{
-	uint32_t			tick;
-	task_sensor_digital_st_t	state;
-	task_sensor_digital_ev_t	event;
-	bool 				flag;
-} task_sensor_digital_dta_t;
+/********************** internal data definition *****************************/
 
 /********************** external data declaration ****************************/
-extern task_sensor_digital_dta_t task_sensor_digital_dta_list[];
 
-/********************** external functions declaration ***********************/
+/********************** external functions definition ************************/
+void pwm_on_task_actuador_analogico(task_actuator_analogico_id_t identifier, uint16_t pulse)
+{
+	task_actuator_analogico_dta_t *p_task_actuator_dta;
 
-/********************** End of CPP guard *************************************/
-#ifdef __cplusplus
+	p_task_actuator_dta = &task_actuator_analogico_dta_list[identifier];
+
+	p_task_actuator_dta->event = EV_ACT_ANALOGICO_PWM_ON;
+	p_task_actuator_dta->flag = true;
+	p_task_actuator_dta->pulse = pulse;
 }
-#endif
+void pwm_off_task_actuador_analogico(task_actuator_analogico_id_t identifier)
+{
+	task_actuator_analogico_dta_t *p_task_actuator_dta;
 
-#endif /* TASK_INC_TASK_SENSOR_ATTRIBUTE_H_ */
+	p_task_actuator_dta = &task_actuator_analogico_dta_list[identifier];
+
+	p_task_actuator_dta->event = EV_ACT_ANALOGICO_PWM_OFF;
+	p_task_actuator_dta->flag = true;
+	p_task_actuator_dta->pulse = 0;
+}
 
 /********************** end of file ******************************************/

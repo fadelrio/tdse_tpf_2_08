@@ -4,12 +4,12 @@
 #include "logger.h"
 #include "dwt.h"
 
-#include "task_system_attribute.h"
-#include "control_temperatura_attribute.h"
-#include "control_temperatura_interface.h"
-#include "task_sensor_digital_attribute.h"
-#include "task_sensor_digital_interface.h"
-#include "task_system_interface.h"
+#include "system/task_system_attribute.h"
+#include "control/control_temperatura_attribute.h"
+#include "control/control_temperatura_interface.h"
+#include "sensors/task_sensor_digital_attribute.h"
+#include "sensors/task_sensor_digital_interface.h"
+#include "system/task_system_interface.h"
 /********************** macros ***********************************************/
 
 #define G_TASK_SYS_CNT_INI			0ul

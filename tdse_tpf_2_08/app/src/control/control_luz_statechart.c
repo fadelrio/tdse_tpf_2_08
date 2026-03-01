@@ -4,10 +4,10 @@
 #include "logger.h"
 #include "dwt.h"
 
-#include "task_system_attribute.h"
-#include "control_luz_attribute.h"
-#include "control_luz_interface.h"
-#include "task_system_interface.h"
+#include "system/task_system_attribute.h"
+#include "control/control_luz_attribute.h"
+#include "control/control_luz_interface.h"
+#include "system/task_system_interface.h"
 /********************** macros ***********************************************/
 
 #define G_TASK_SYS_CNT_INI			0ul

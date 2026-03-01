@@ -30,7 +30,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *
  *
- * @file   : task_actuator_interface.c
+ * @file   : task_system_interface.c
  * @date   : Set 26, 2023
  * @author : Juan Manuel Cruz <jcruz@fi.uba.ar> <jcruz@frba.utn.edu.ar>
  * @version	v1.0.0
@@ -47,38 +47,81 @@
 /* Application & Tasks includes */
 #include "board.h"
 #include "app.h"
-#include <task_actuator_analogico_attribute.h>
+#include "system/task_system_attribute.h"
 
 /********************** macros and definitions *******************************/
+#define EVENT_UNDEFINED	(255)
+#define MAX_EVENTS		(16)
 
 /********************** internal data declaration ****************************/
 
 /********************** internal functions declaration ***********************/
 
 /********************** internal data definition *****************************/
+struct
+{
+	uint32_t	head;
+	uint32_t	tail;
+	uint32_t	count;
+	task_system_ev_t	queue[MAX_EVENTS];
+	system_error_t error;
+} queue_task_a;
 
 /********************** external data declaration ****************************/
 
 /********************** external functions definition ************************/
-void pwm_on_task_actuador_analogico(task_actuator_analogico_id_t identifier, uint16_t pulse)
+void init_queue_event_task_system(void)
 {
-	task_actuator_analogico_dta_t *p_task_actuator_dta;
+	uint32_t i;
 
-	p_task_actuator_dta = &task_actuator_analogico_dta_list[identifier];
+	queue_task_a.head = 0;
+	queue_task_a.tail = 0;
+	queue_task_a.count = 0;
+	queue_task_a.error = NADA;
 
-	p_task_actuator_dta->event = EV_ACT_ANALOGICO_PWM_ON;
-	p_task_actuator_dta->flag = true;
-	p_task_actuator_dta->pulse = pulse;
+	for (i = 0; i < MAX_EVENTS; i++)
+		queue_task_a.queue[i] = EVENT_UNDEFINED;
 }
-void pwm_off_task_actuador_analogico(task_actuator_analogico_id_t identifier)
+
+void put_event_task_system(task_system_ev_t event)
 {
-	task_actuator_analogico_dta_t *p_task_actuator_dta;
+	queue_task_a.count++;
+	queue_task_a.queue[queue_task_a.head++] = event;
 
-	p_task_actuator_dta = &task_actuator_analogico_dta_list[identifier];
-
-	p_task_actuator_dta->event = EV_ACT_ANALOGICO_PWM_OFF;
-	p_task_actuator_dta->flag = true;
-	p_task_actuator_dta->pulse = 0;
+	if (MAX_EVENTS == queue_task_a.head)
+		queue_task_a.head = 0;
 }
+
+task_system_ev_t get_event_task_system(void)
+{
+	task_system_ev_t event;
+
+	queue_task_a.count--;
+	event = queue_task_a.queue[queue_task_a.tail];
+	queue_task_a.queue[queue_task_a.tail++] = EVENT_UNDEFINED;
+
+	if (MAX_EVENTS == queue_task_a.tail)
+		queue_task_a.tail = 0;
+
+	return event;
+}
+
+bool any_event_task_system(void)
+{
+  return (queue_task_a.head != queue_task_a.tail);
+}
+
+
+extern void put_system_error(system_error_t error)
+{
+	queue_task_a.error = error;
+}
+
+
+extern system_error_t get_system_error(void)
+{
+	return queue_task_a.error;
+}
+
 
 /********************** end of file ******************************************/

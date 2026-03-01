@@ -46,12 +46,11 @@
 /* Application & Tasks includes */
 #include "board.h"
 #include "app.h"
-#include "task_system_attribute.h"
-#include "menu_attribute.h"
-#include "menu_interface.h"
-#include "task_sensor_boton_attribute.h"
-#include "task_system_attribute.h"
-#include "task_system_interface.h"
+#include "system/task_system_attribute.h"
+#include "menu/menu_attribute.h"
+#include "menu/menu_interface.h"
+#include "sensors/task_sensor_boton_attribute.h"
+#include "system/task_system_interface.h"
 
 /********************** macros and definitions *******************************/
 #define G_TASK_SEN_CNT_INIT			0ul

@@ -46,10 +46,10 @@
 /* Application & Tasks includes */
 #include "board.h"
 #include "app.h"
-#include "task_system_attribute.h"
-#include "task_system_interface.h"
-#include "task_sensor_analogico_attribute.h"
-#include "task_sensor_analogico_interface.h"
+#include "system/task_system_attribute.h"
+#include "system/task_system_interface.h"
+#include "sensors/task_sensor_analogico_attribute.h"
+#include "sensors/task_sensor_analogico_interface.h"
 
 /********************** macros and definitions *******************************/
 #define G_TASK_SEN_CNT_INIT			0ul

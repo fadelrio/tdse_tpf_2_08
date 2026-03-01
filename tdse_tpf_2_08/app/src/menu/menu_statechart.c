@@ -3,9 +3,9 @@
 #include "main.h"
 #include "logger.h"
 #include "dwt.h"
-#include "task_system_attribute.h"
-#include "menu_attribute.h"
-#include "menu_interface.h"
+#include "system/task_system_attribute.h"
+#include "menu/menu_attribute.h"
+#include "menu/menu_interface.h"
 #include "display.h"
 /********************** macros ***********************************************/
 

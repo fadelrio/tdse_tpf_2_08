@@ -9,7 +9,7 @@
 /* Application & Tasks includes */
 #include "board.h"
 #include "app.h"
-#include "control_humedad_attribute.h"
+#include "control/control_humedad_attribute.h"
 
 /********************** macros and definitions *******************************/
 #define EVENT_UNDEFINED	(255)

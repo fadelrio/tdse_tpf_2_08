@@ -45,10 +45,10 @@
 
 /* Application & Tasks includes */
 #include "board.h"
-#include "task_system.h"
-#include "task_sensor_digital.h"
-#include "task_sensor_analogico.h"
-#include <task_actuator_digital.h>
+#include "system/task_system.h"
+#include "sensors/task_sensor_digital.h"
+#include "sensors/task_sensor_analogico.h"
+#include <actuators/task_actuator_digital.h>
 
 /********************** macros and definitions *******************************/
 #define G_APP_CNT_INI		0ul

@@ -9,7 +9,7 @@
 /* Application & Tasks includes */
 #include "board.h"
 #include "app.h"
-#include "menu_attribute.h"
+#include "menu/menu_attribute.h"
 
 /********************** macros and definitions *******************************/
 #define EVENT_UNDEFINED	(255)

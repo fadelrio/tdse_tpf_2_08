@@ -9,7 +9,7 @@
 /* Application & Tasks includes */
 #include "board.h"
 #include "app.h"
-#include "task_sensor_digital_attribute.h"
+#include "sensors/task_sensor_digital_attribute.h"
 
 /********************** macros and definitions *******************************/
 #define EVENT_UNDEFINED	(255)

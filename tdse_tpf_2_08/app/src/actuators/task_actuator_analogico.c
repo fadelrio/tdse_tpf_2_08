@@ -46,8 +46,8 @@
 /* Application & Tasks includes */
 #include "board.h"
 #include "app.h"
-#include <task_actuator_analogico_attribute.h>
-#include <task_actuator_analogico_interface.h>
+#include <actuators/task_actuator_analogico_attribute.h>
+#include <actuators/task_actuator_analogico_interface.h>
 
 /********************** macros and definitions *******************************/
 #define G_TASK_ACT_CNT_INIT			0ul

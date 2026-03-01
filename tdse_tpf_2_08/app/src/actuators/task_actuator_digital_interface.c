@@ -47,7 +47,7 @@
 /* Application & Tasks includes */
 #include "board.h"
 #include "app.h"
-#include <task_actuator_digital_attribute.h>
+#include <actuators/task_actuator_digital_attribute.h>
 
 /********************** macros and definitions *******************************/
 

@@ -9,7 +9,7 @@
 /* Application & Tasks includes */
 #include "board.h"
 #include "app.h"
-#include "control_riego_attribute.h"
+#include "control/control_riego_attribute.h"
 
 /********************** macros and definitions *******************************/
 #define EVENT_UNDEFINED	(255)

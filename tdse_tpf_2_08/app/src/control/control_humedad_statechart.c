@@ -5,12 +5,12 @@
 #include "dwt.h"
 
 #include "app.h"
-#include "task_system_attribute.h"
-#include "control_humedad_attribute.h"
-#include "control_humedad_interface.h"
-#include "task_sensor_digital_attribute.h"
-#include "task_sensor_digital_interface.h"
-#include "task_system_interface.h"
+#include "system/task_system_attribute.h"
+#include "control/control_humedad_attribute.h"
+#include "control/control_humedad_interface.h"
+#include "sensors/task_sensor_digital_attribute.h"
+#include "sensors/task_sensor_digital_interface.h"
+#include "system/task_system_interface.h"
 /********************** macros ***********************************************/
 
 #define G_TASK_SYS_CNT_INI			0ul
