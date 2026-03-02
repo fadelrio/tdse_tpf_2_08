@@ -50,24 +50,31 @@
 #include "system/task_system_interface.h"
 #include "sensors/task_sensor_analogico_attribute.h"
 #include "sensors/task_sensor_analogico_interface.h"
+#include "control/control_riego_interface.h"
+#include "control/control_luz_interface.h"
 
 /********************** macros and definitions *******************************/
 #define G_TASK_SEN_CNT_INIT			0ul
 #define G_TASK_SEN_TICK_CNT_INI		0ul
 
-#define DEL_BTN_XX_MIN				0ul
-#define DEL_BTN_XX_MED				25ul
-#define DEL_BTN_XX_MAX				50ul
+#define DEL_SEN_XX_MIN				0ul
+#define DEL_SEN_XX_MED				25ul
+#define DEL_SEN_XX_MAX				50ul
+
+extern ADC_HandleTypeDef hadc1;
+extern ADC_HandleTypeDef hadc2;
 
 /********************** internal data declaration ****************************/
 const task_sensor_analogico_cfg_t task_sensor_analogico_cfg_list[] = {
-	{ID_BTN_A,  BTN_A_PORT,  BTN_A_PIN,  BTN_A_PRESSED, DEL_BTN_XX_MAX}
+		{ID_SENSOR_LUZ, DEL_SEN_XX_MAX, &hadc1, SENSE_RIEGO_READY, SENSAR_LUZ_READY},
+		{ID_SENSOR_RIEGO, DEL_SEN_XX_MAX, &hadc2, SENSE_RIEGO_READY, SENSAR_LUZ_READY}
 };
 
-#define SENSOR_CFG_QTY	(sizeof(task_sensor_cfg_list)/sizeof(task_sensor_cfg_t))
+#define SENSOR_CFG_QTY	(sizeof(task_sensor_analogico_cfg_list)/sizeof(task_sensor_analogico_cfg_t))
 
 task_sensor_analogico_dta_t task_sensor_analogico_dta_list[] = {
-	{DEL_BTN_XX_MIN, ST_IDLE_SENSOR_ANA, NADA_SENSOR_ANA, false}
+		{DEL_SEN_XX_MIN, ST_SENSOR_ANALOGICO_IDLE, EV_SENSOR_ANALOGICO_NADA, false, 0},
+		{DEL_SEN_XX_MIN, ST_SENSOR_ANALOGICO_IDLE, EV_SENSOR_ANALOGICO_NADA, false, 0}
 };
 
 #define SENSOR_DTA_QTY	(sizeof(task_sensor_analogico_dta_list)/sizeof(task_sensor_analogico_dta_t))
@@ -106,10 +113,10 @@ void task_sensor_analogico_init(void *parameters)
 		p_task_sensor_dta = &task_sensor_analogico_dta_list[index];
 
 		/* Init & Print out: Index & Task execution FSM */
-		state = ST_IDLE_SENSOR_ANA;
+		state = ST_SENSOR_ANALOGICO_IDLE;
 		p_task_sensor_dta->state = state;
 
-		event = NADA_SENSOR_ANA;
+		event = EV_SENSOR_ANALOGICO_NADA;
 		p_task_sensor_dta->event = event;
 
 		LOGGER_INFO(" ");
@@ -170,20 +177,56 @@ void task_sensor_analogico_statechart(void)
 		p_task_sensor_cfg = &task_sensor_analogico_cfg_list[index];
 		p_task_sensor_dta = &task_sensor_analogico_dta_list[index];
 
-		if (true == any_event_task_sensor_analogico())
-			{
-				p_task_sensor_dta->flag = true;
-				p_task_sensor_dta->event = get_event_task_sensor_analogico();
-			}
-
 		switch (p_task_sensor_dta->state)
 		{
-			case ST_IDLE_SENSOR_ANA:
+			case ST_SENSOR_ANALOGICO_IDLE:
+				if(p_task_sensor_dta->flag){
+					if (p_task_sensor_dta->event == EV_SENSOR_ANALOGICO_START_MEASUREMENT){
+						if(HAL_ADC_Start_IT(p_task_sensor_cfg->handler) != HAL_OK){
+							Error_Handler();
+						}
+						p_task_sensor_dta->state = ST_SENSOR_ANALOGICO_MEASURING;
+					}
+					p_task_sensor_dta->flag = false;
+				}
 
 				break;
 
+			case ST_SENSOR_ANALOGICO_MEASURING:
+				if(p_task_sensor_dta->flag){
+					if(p_task_sensor_dta->event == EV_SENSOR_ANALOGICO_MEASURE_READY){
+						p_task_sensor_dta->measure = HAL_ADC_GetValue(p_task_sensor_cfg->handler);
+						if(p_task_sensor_cfg->identifier == ID_SENSOR_LUZ){
+							put_event_control_luz(p_task_sensor_cfg->measure_ready_luz);
+						}else if(p_task_sensor_cfg->identifier == ID_SENSOR_RIEGO){
+							put_event_control_riego(p_task_sensor_cfg->measure_ready_riego);
+						}
+						p_task_sensor_dta->state = ST_SENSOR_ANALOGICO_IDLE;
+					}
+					p_task_sensor_dta->flag = false;
+				}
+				break;
+
+			default:
+
+				p_task_sensor_dta->tick  = DEL_SEN_XX_MIN;
+				p_task_sensor_dta->state = ST_SENSOR_ANALOGICO_IDLE;
+				p_task_sensor_dta->event = EV_SENSOR_ANALOGICO_NADA;
+
+				break;
 		}
 	}
+}
+
+void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc){
+	task_sensor_analogico_dta_t *p_task_sensor_dta;
+	if(hadc->Instance == ADC1){
+		p_task_sensor_dta = &task_sensor_analogico_dta_list[ID_SENSOR_LUZ];
+	}else if(hadc->Instance == ADC1){
+		p_task_sensor_dta = &task_sensor_analogico_dta_list[ID_SENSOR_RIEGO];
+	}
+	p_task_sensor_dta->flag = true;
+	p_task_sensor_dta->event = EV_SENSOR_ANALOGICO_MEASURE_READY;
 }
 
 /********************** end of file ******************************************/

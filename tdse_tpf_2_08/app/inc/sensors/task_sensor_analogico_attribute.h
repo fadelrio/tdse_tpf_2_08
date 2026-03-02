@@ -44,39 +44,41 @@ extern "C" {
 #endif
 
 /********************** inclusions *******************************************/
-
+#include "control/control_riego_attribute.h"
+#include "control/control_luz_attribute.h"
 /********************** macros ***********************************************/
 
 /********************** typedef **********************************************/
 
 /* Events to excite Task Sensor */
-typedef enum task_sensor_analogico_ev {NADA_SENSOR_ANA/*TODO completar*/} task_sensor_analogico_ev_t;
+typedef enum task_sensor_analogico_ev {EV_SENSOR_ANALOGICO_START_MEASUREMENT,EV_SENSOR_ANALOGICO_NADA, EV_SENSOR_ANALOGICO_MEASURE_READY} task_sensor_analogico_ev_t;
 
 /* States of Task Sensor */
-typedef enum task_sensor_analogico_st {ST_IDLE_SENSOR_ANA/*TODO completar*/} task_sensor_analogico_st_t;
+typedef enum task_sensor_analogico_st {ST_SENSOR_ANALOGICO_IDLE, ST_SENSOR_ANALOGICO_MEASURING} task_sensor_analogico_st_t;
 
 /* Identifier of Task Sensor */
-typedef enum task_sensor_analogico_id {ID_BTN_A} task_sensor_analogico_id_t;
+typedef enum task_sensor_analogico_id {ID_SENSOR_LUZ, ID_SENSOR_RIEGO} task_sensor_analogico_id_t;
 
 typedef struct
 {
 	task_sensor_analogico_id_t	identifier;
-	GPIO_TypeDef *		gpio_port;
-	uint16_t			pin;
-	GPIO_PinState		pressed;
-	uint32_t			tick_max;
+	uint32_t					tick_max;
+	ADC_HandleTypeDef			*handler;
+	control_riego_ev_t			measure_ready_riego;
+	control_luz_ev_t			measure_ready_luz;
 } task_sensor_analogico_cfg_t;
 
 typedef struct
 {
-	uint32_t			tick;
+	uint32_t					tick;
 	task_sensor_analogico_st_t	state;
 	task_sensor_analogico_ev_t	event;
-	bool flag;
+	bool 						flag;
+	uint32_t 					measure;
 } task_sensor_analogico_dta_t;
 
 /********************** external data declaration ****************************/
-extern task_sensor_analogico_dta_t task_sensor_boton_dta_list[];
+extern task_sensor_analogico_dta_t task_sensor_analogico_dta_list[];
 
 /********************** external functions declaration ***********************/
 

@@ -15,15 +15,10 @@ extern "C" {
 /********************** external data declaration ****************************/
 
 /********************** external functions declaration ***********************/
-extern void init_queue_event_task_sensor_analogico(void);
-extern void put_event_task_sensor_analogico(task_sensor_analogico_ev_t event);
-extern task_sensor_analogico_ev_t get_event_task_sensor_analogico(void);
-extern bool any_event_task_sensor_analogico(void);
-extern float get_riego_measure();
-extern float get_luz_measure();
-extern void set_riego_measure(float riego);
-extern void set_luz_measure(float luz);
-
+extern void start_riego_measurement_task_sensor_analogico(void);
+extern void start_luz_measurement_task_sensor_analogico(void);
+extern uint32_t get_riego_task_sensor_analogico(void);
+extern uint32_t get_luz_task_sensor_analogico(void);
 
 /********************** End of CPP guard *************************************/
 #ifdef __cplusplus

@@ -8,6 +8,8 @@
 #include "control/control_luz_attribute.h"
 #include "control/control_luz_interface.h"
 #include "system/task_system_interface.h"
+#include "sensors/task_sensor_analogico_attribute.h"
+#include "sensors/task_sensor_analogico_interface.h"
 /********************** macros ***********************************************/
 
 #define G_TASK_SYS_CNT_INI			0ul
@@ -57,11 +59,12 @@ void update_control_luz_statechart(const task_system_cfg_t p_task_system_cfg){
 				}else if(p_control_luz_dta->tick == 0){
 					p_control_luz_dta->state = CHECK_LUZ;
 					p_control_luz_dta->flag = false;
-					//sensar_luz() aca va la funcion esta pero hay que armarla todavia
+					start_luz_measurement_task_sensor_analogico();
 				}
-			}//completar con los casos que haga falta
+			}
 		case CHECK_LUZ:
 			if(p_control_luz_dta->flag == true && p_control_luz_dta->event == SENSAR_LUZ_READY){
+				p_control_luz_dta->luz = get_luz_task_sensor_analogico();
 				if(p_control_luz_dta->luz > (p_task_system_cfg.l_0 + DELTA_LUZ) && p_control_luz_dta->estado_led > 0){
 					p_control_luz_dta->state = BAJAR_LUZ;
 					p_control_luz_dta->flag = false;
@@ -76,36 +79,34 @@ void update_control_luz_statechart(const task_system_cfg_t p_task_system_cfg){
 		case ILUMINAR:
 				if(p_control_luz_dta->luz < (p_task_system_cfg.l_0 - DELTA_LUZ) && p_control_luz_dta->estado_led < 0xFFFF - DELTA_LUZ){
 					p_control_luz_dta->state = SUBIR_LUZ;
-					//p_control_luz_dta->flag = false;
 #ifndef TEST_0
 
 					check_error_luz();
 #endif
 				}else if(p_control_luz_dta->estado_led > 0xFFFF - DELTA_LUZ){
 					p_control_luz_dta->state = IDLE_LUZ;
-					//p_control_luz_dta->flag = false;
 #ifndef TEST_0
 
 					check_error_luz();
 #endif
 				}else if(p_control_luz_dta->luz > p_task_system_cfg.l_0 - DELTA_LUZ){
 					p_control_luz_dta->state = CHECK_LUZ;
-					//p_control_luz_dta->flag = false;
-					//sensar_luz() funcion que hay que hacer
+					start_luz_measurement_task_sensor_analogico();
 				}
+				p_control_luz_dta->flag = false;
 		case BAJAR_LUZ:
 				if(p_control_luz_dta->estado_led > 0){
 					p_control_luz_dta->state = CHECK_LUZ;
-					//p_control_luz_dta->flag = false;
+
 					p_control_luz_dta->estado_led-= DELTA_CAMBIO_LUZ;
 				}else if(p_control_luz_dta->estado_led == 0){
 					p_control_luz_dta->state = IDLE_LUZ;
-					//p_control_luz_dta->flag = false;
 				}
+				p_control_luz_dta->flag = false;
 
 		case SUBIR_LUZ:
 				p_control_luz_dta->state = ILUMINAR;
-				//p_control_luz_dta->flag = false;
+				p_control_luz_dta->flag = false;
 				p_control_luz_dta->estado_led += DELTA_CAMBIO_LUZ;
 			}
 }
