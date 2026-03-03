@@ -68,10 +68,16 @@ void Error_Handler(void);
 #define USART_RX_GPIO_Port GPIOA
 #define LD2_Pin GPIO_PIN_5
 #define LD2_GPIO_Port GPIOA
+#define OUTPUT_RIEGO_Pin GPIO_PIN_4
+#define OUTPUT_RIEGO_GPIO_Port GPIOC
 #define D6_Pin GPIO_PIN_5
 #define D6_GPIO_Port GPIOC
 #define PWM_HEATER_Pin GPIO_PIN_0
 #define PWM_HEATER_GPIO_Port GPIOB
+#define OUTPUT_VENTILADOR_Pin GPIO_PIN_1
+#define OUTPUT_VENTILADOR_GPIO_Port GPIOB
+#define OUTPUT_CALENTADOR_Pin GPIO_PIN_2
+#define OUTPUT_CALENTADOR_GPIO_Port GPIOB
 #define D9_Pin GPIO_PIN_12
 #define D9_GPIO_Port GPIOB
 #define D5_Pin GPIO_PIN_6
@@ -102,6 +108,8 @@ void Error_Handler(void);
 #define BTN_ENTER_GPIO_Port GPIOB
 #define BTN_DOWN_Pin GPIO_PIN_5
 #define BTN_DOWN_GPIO_Port GPIOB
+#define OUTPUT_HUMIFICADOR_Pin GPIO_PIN_6
+#define OUTPUT_HUMIFICADOR_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 

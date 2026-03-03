@@ -108,7 +108,7 @@ typedef enum task_actuator_digital_st {ST_LED_XX_OFF,
 							   ST_LED_XX_PULSE} task_actuator_digital_st_t;
 
 /* Identifier of Task Actuator */
-typedef enum task_actuator_digital_id {ID_LED_A} task_actuator_digital_id_t;
+typedef enum task_actuator_digital_id {ID_OUTPUT_RIEGO,ID_OUTPUT_VENTILADOR,ID_OUTPUT_HUMIFICADOR,ID_OUTPUT_CALENTADOR} task_actuator_digital_id_t;
 
 typedef struct
 {
@@ -117,8 +117,6 @@ typedef struct
 	uint16_t			pin;
 	GPIO_PinState		led_on;
 	GPIO_PinState		led_off;
-	uint32_t			tick_blink;
-	uint32_t			tick_pulse;
 } task_actuator_digital_cfg_t;
 
 typedef struct

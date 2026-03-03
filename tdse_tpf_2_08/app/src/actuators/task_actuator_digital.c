@@ -59,8 +59,10 @@
 
 /********************** internal data declaration ****************************/
 const task_actuator_digital_cfg_t task_actuator_digital_cfg_list[] = {
-	{ID_LED_A,  LED_A_PORT,  LED_A_PIN, LED_A_ON,  LED_A_OFF,
-	 DEL_LED_XX_BLI, DEL_LED_XX_PUL}
+	{ID_OUTPUT_RIEGO, OUTPUT_RIEGO_GPIO_Port ,  OUTPUT_RIEGO_Pin, LED_A_ON,  LED_A_OFF},
+	{ID_OUTPUT_VENTILADOR,OUTPUT_VENTILADOR_GPIO_Port,OUTPUT_VENTILADOR_Pin,LED_A_ON,LED_A_OFF},
+	{ID_OUTPUT_HUMIFICADOR,  OUTPUT_HUMIFICADOR_GPIO_Port,  OUTPUT_HUMIFICADOR_Pin, LED_A_ON,  LED_A_OFF},
+	{ID_OUTPUT_CALENTADOR,  OUTPUT_CALENTADOR_GPIO_Port,  OUTPUT_CALENTADOR_Pin, LED_A_ON,  LED_A_OFF}
 };
 
 #define ACTUATOR_CFG_QTY	(sizeof(task_actuator_digital_cfg_list)/sizeof(task_actuator_digital_cfg_t))
@@ -199,18 +201,6 @@ void task_actuator_digital_statechart(void)
 					HAL_GPIO_WritePin(p_task_actuator_cfg->gpio_port, p_task_actuator_cfg->pin, p_task_actuator_cfg->led_off);
 					p_task_actuator_dta->state = ST_LED_XX_OFF;
 				}
-
-				break;
-
-			case ST_LED_XX_BLINK_ON:
-
-				break;
-
-			case ST_LED_XX_BLINK_OFF:
-
-				break;
-
-			case ST_LED_XX_PULSE:
 
 				break;
 
