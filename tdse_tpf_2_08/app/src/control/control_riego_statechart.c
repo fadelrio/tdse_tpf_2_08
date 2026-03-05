@@ -64,7 +64,7 @@ void update_control_riego_statechart(const task_system_cfg_t p_task_system_cfg){
 		case CHECK_RIEGO:
 			if (p_control_riego_dta->flag && p_control_riego_dta->event == SENSE_RIEGO_READY) {
 				p_control_riego_dta->riego_ant = p_control_riego_dta->riego;
-				p_control_riego_dta->riego = get_riego_task_sensor_analogico(); //TODO: leer_humedad()
+				p_control_riego_dta->riego = get_riego_task_sensor_analogico();
 				if(p_control_riego_dta->riego < p_task_system_cfg.r_0 - DELTA_RIEGO) {
 					p_control_riego_dta->tick = TIMER_CAMB_RIEGO;
 					//regador_on(); // todo
@@ -91,7 +91,7 @@ void update_control_riego_statechart(const task_system_cfg_t p_task_system_cfg){
 		case SENSE_RIEGO:
 			if(p_control_riego_dta->flag && p_control_riego_dta->event == SENSE_RIEGO_READY) {
 				p_control_riego_dta->riego_ant = p_control_riego_dta->riego;
-				p_control_riego_dta->riego = get_riego_task_sensor_analogico(); //TODO: leer_humedad()
+				p_control_riego_dta->riego = get_riego_task_sensor_analogico();
 				if(p_control_riego_dta->riego < p_task_system_cfg.r_0 - DELTA_RIEGO) {
 					p_control_riego_dta->tick = TIMER_CAMB_RIEGO;
 					//regador_on(); //todo

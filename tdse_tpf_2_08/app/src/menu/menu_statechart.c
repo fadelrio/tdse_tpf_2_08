@@ -15,26 +15,30 @@
 #define DEL_SYS_MIN					0ul
 #define DEL_SYS_MED					50ul
 #define DEL_SYS_MAX					500ul
+
+#define RIEGO_MAX					4095
+#define RIEGO_MIN					0
+#define DELTA_RIEGO					41
+
+#define LUZ_MAX						4095
+#define LUZ_MIN						0
+#define DELTA_LUZ					41
+
+#define TEMP_MAX					40
+#define TEMP_MIN					25
+#define DELTA_TEMP					1
+
+#define HUMEDAD_MAX					100
+#define HUMEDAD_MIN					30
+#define DELTA_HUM					5
 /********************** typedef **********************************************/
 
 menu_dta_t menu_dta = {DEL_SYS_MIN, TEMPERATURA_SELECT, NEXT, false};
 
-//TODO armar las variables de control
-
-int TEMP_MAX;
-int TEMP_MIN;
-
-int LUZ_MAX;
-int LUZ_MIN;
-
-int HUMEDAD_MAX;
-int HUMEDAD_MIN;
-
-int RIEGO_MAX;
-int RIEGO_MIN;
 
 int countDigits(int n);
 void displayWriteValue(int n);
+int int12bits_a_porcentaje(uint32_t i);
 
 
 void init_menu_statechart(){
@@ -92,12 +96,12 @@ void update_menu_statechart(task_system_cfg_t *p_task_system_cfg){
 					displayStringWrite("   TEMPERATURA  ");
 					p_menu_dta->state = TEMPERATURA_SELECT;
 				}else if(p_menu_dta->event == UP && p_task_system_cfg->t_0 < TEMP_MAX){
-					p_task_system_cfg->t_0+=1;
+					p_task_system_cfg->t_0+=DELTA_TEMP;
 					displayCharPositionWrite(0,0);
 					displayStringWrite("   TEMPERATURA  ");
 					displayWriteValue(p_task_system_cfg->t_0);
 				}else if(p_menu_dta->event == DOWN && p_task_system_cfg->t_0 > TEMP_MIN){
-					p_task_system_cfg->t_0-=1;
+					p_task_system_cfg->t_0-=DELTA_TEMP;
 					displayCharPositionWrite(0,0);
 					displayStringWrite("   TEMPERATURA  ");
 					displayWriteValue(p_task_system_cfg->t_0);
@@ -117,7 +121,7 @@ void update_menu_statechart(task_system_cfg_t *p_task_system_cfg){
 					p_menu_dta->state = LUZ_MENU;
 					displayCharPositionWrite(0,0);
 					displayStringWrite("      LUZ      ");
-					displayWriteValue(p_task_system_cfg->l_0);
+					displayWriteValue(int12bits_a_porcentaje(p_task_system_cfg->l_0));
 				}
 				p_menu_dta->flag = false;
 			}
@@ -131,15 +135,15 @@ void update_menu_statechart(task_system_cfg_t *p_task_system_cfg){
 					displayStringWrite("      LUZ      ");
 					p_menu_dta->state = LUZ_SELECT;
 				}else if(p_menu_dta->event == UP && p_task_system_cfg->l_0 < LUZ_MAX){
-					p_task_system_cfg->l_0+=1;
+					p_task_system_cfg->l_0+=DELTA_LUZ;
 					displayCharPositionWrite(0,0);
 					displayStringWrite("      LUZ      ");
-					displayWriteValue(p_task_system_cfg->l_0);
+					displayWriteValue(int12bits_a_porcentaje(p_task_system_cfg->l_0));
 				}else if(p_menu_dta->event == DOWN && p_task_system_cfg->l_0 > LUZ_MIN){
-					p_task_system_cfg->l_0 -=1;
+					p_task_system_cfg->l_0 -=DELTA_LUZ;
 					displayCharPositionWrite(0,0);
 					displayStringWrite("      LUZ      ");
-					displayWriteValue(p_task_system_cfg->l_0);
+					displayWriteValue(int12bits_a_porcentaje(p_task_system_cfg->l_0));
 				}
 				p_menu_dta->flag = false;
 			}
@@ -170,12 +174,12 @@ void update_menu_statechart(task_system_cfg_t *p_task_system_cfg){
 					displayStringWrite("     HUMEDAD    ");
 					p_menu_dta->state = HUMEDAD_SELECT;
 				}else if(p_menu_dta->event == UP && p_task_system_cfg->h_0 < HUMEDAD_MAX){
-					p_task_system_cfg->h_0+=1;
+					p_task_system_cfg->h_0+=DELTA_HUM;
 					displayCharPositionWrite(0,0);
 					displayStringWrite("     HUMEDAD    ");
 					displayWriteValue(p_task_system_cfg->h_0);
 				}else if(p_menu_dta->event == DOWN && p_task_system_cfg->h_0 > HUMEDAD_MIN){
-					p_task_system_cfg->h_0-=1;
+					p_task_system_cfg->h_0-=DELTA_HUM;
 					displayCharPositionWrite(0,0);
 					displayStringWrite("     HUMEDAD    ");
 					displayWriteValue(p_task_system_cfg->h_0);
@@ -195,7 +199,7 @@ void update_menu_statechart(task_system_cfg_t *p_task_system_cfg){
 					p_menu_dta->state = RIEGO_MENU;
 					displayCharPositionWrite(0,0);
 					displayStringWrite("      RIEGO     ");
-					displayWriteValue(p_task_system_cfg->r_0);//TODO IMPORTANTE mapear del valor crudo que usamos nosotros a uno porcentual para el display
+					displayWriteValue(int12bits_a_porcentaje(p_task_system_cfg->r_0));
 				}
 				p_menu_dta->flag = false;
 			}
@@ -209,15 +213,15 @@ void update_menu_statechart(task_system_cfg_t *p_task_system_cfg){
 					displayStringWrite("      RIEGO     ");
 					p_menu_dta->state = RIEGO_SELECT;
 				}else if(p_menu_dta->event == UP && p_task_system_cfg->r_0 < RIEGO_MAX){
-					p_task_system_cfg->r_0+=1;
+					p_task_system_cfg->r_0+=DELTA_RIEGO;
 					displayCharPositionWrite(0,0);
 					displayStringWrite("      RIEGO     ");
-					displayWriteValue(p_task_system_cfg->r_0);
+					displayWriteValue(int12bits_a_porcentaje(p_task_system_cfg->r_0));
 				}else if(p_menu_dta->event == DOWN && p_task_system_cfg->r_0 > RIEGO_MIN){
-					p_task_system_cfg->r_0-=1;
+					p_task_system_cfg->r_0-=DELTA_RIEGO;
 					displayCharPositionWrite(0,0);
 					displayStringWrite("      RIEGO     ");
-					displayWriteValue(p_task_system_cfg->r_0);
+					displayWriteValue(int12bits_a_porcentaje(p_task_system_cfg->r_0));
 				}
 				p_menu_dta->flag = false;
 			}
@@ -257,4 +261,8 @@ void displayWriteValue(int n){
 		snprintf(dato, sizeof(dato), "      %d       ", n);
 	    displayStringWrite(dato);
 	}
+}
+
+int int12bits_a_porcentaje(uint32_t i){
+	return i*100/4096;
 }

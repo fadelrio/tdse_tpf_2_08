@@ -67,6 +67,8 @@
 #include "actuators/task_actuator_digital_attribute.h"
 #include "actuators/task_actuator_digital_interface.h"
 #include "display.h"
+#include "memory/task_memory_attribute.h"
+#include "memory/task_memory_interface.h"
 
 /********************** macros and definitions *******************************/
 #define G_TASK_SYS_CNT_INI			0ul
@@ -76,15 +78,17 @@
 #define DEL_SYS_MED					50ul
 #define DEL_SYS_MAX					500ul
 
+#define CONFIG_MEM_ADRESS			0
+
 /* Modes to excite Task System */
-typedef enum task_system_mode {CONTROL, MENU, SYSTEM_ERROR} task_system_mode_t;
+typedef enum task_system_mode {CONTROL, MENU, SYSTEM_ERROR, MEM_ACQUIRE} task_system_mode_t;
 
 /********************** internal data declaration ****************************/
 task_system_dta_t task_system_dta =
-	{DEL_SYS_MIN, ST_SYS_CONTROL, EV_SYS_NADA, false};
+	{DEL_SYS_MIN, ST_SYS_MEM_ACQUIRE, EV_SYS_NADA, false};
 
 task_system_cfg_t task_system_cfg =
-	{24.0,.5,.5,.5};
+	{0,0,0,0};
 
 
 /********************** internal functions declaration ***********************/
@@ -100,7 +104,7 @@ void task_system_enable_control_queues();
 void task_system_enable_menu_queues();
 void disable_all_queues();
 void system_statechart(task_system_dta_t *p_task_system_dta);
-void task_system_get_config(task_system_cfg_t *task_system_cfg); //TODO implementar el acceso a memoria
+void task_system_mem_acquire_statechart();
 
 /********************** internal data definition *****************************/
 const char *p_task_system 		= "Task System (System Statechart)";
@@ -131,7 +135,7 @@ void task_system_init(void *parameters)
 
 	init_queue_event_task_system();
 
-	task_system_set_mode(CONTROL);
+	task_system_set_mode(MEM_ACQUIRE);
 
 	/* Update Task System Data Pointer */
 	p_task_system_dta = &task_system_dta;
@@ -152,9 +156,6 @@ void task_system_init(void *parameters)
 				GET_NAME(event), (uint32_t)event,
 				GET_NAME(b_event), (b_event ? "true" : "false"));
 
-	task_system_get_config(&task_system_cfg);
-
-	task_system_set_mode(CONTROL);
 	init_control_luz_statechart();
 	init_control_temperatura_statechart();
 	init_control_humedad_statechart();
@@ -185,6 +186,12 @@ void task_system_update(void *parameters)
 		/* Run Task Statechart */
 		switch (g_task_system_mode)
 		{
+			case MEM_ACQUIRE:
+
+				system_statechart(&task_system_dta);
+
+				break;
+
 			case CONTROL:
 
 				task_system_control_statechart();
@@ -350,6 +357,7 @@ void system_statechart(task_system_dta_t *p_task_system_dta){
 						task_system_set_mode(MENU);
 						p_task_system_dta->state = ST_SYS_MENU;
 						p_task_system_dta->flag = false;
+
 					}else if(p_task_system_dta->event == EV_SYS_ERROR){
 						disable_all_queues();
 						task_system_set_mode(SYSTEM_ERROR);
@@ -365,8 +373,10 @@ void system_statechart(task_system_dta_t *p_task_system_dta){
 						task_system_disable_menu_queues();
 						task_system_enable_control_queues();
 						task_system_set_mode(CONTROL);
-						p_task_system_dta->state = ST_SYS_CONTROL;
-						p_task_system_dta->flag = false;
+						if (write_task_memory(ID_24C256, CONFIG_MEM_ADRESS, &task_system_cfg, sizeof(task_system_cfg))){
+							p_task_system_dta->state = ST_SYS_CONTROL;
+							p_task_system_dta->flag = false;
+						}
 					}else if(p_task_system_dta->event == EV_SYS_ERROR){
 						disable_all_queues();
 						task_system_set_mode(SYSTEM_ERROR);
@@ -380,6 +390,18 @@ void system_statechart(task_system_dta_t *p_task_system_dta){
 				p_task_system_dta->flag = false;
 				break;
 
+			case ST_SYS_MEM_ACQUIRE:
+				if (p_task_system_dta->flag){
+					if (p_task_system_dta->event == EV_SYS_MEM_READ_READY){
+						task_system_enable_control_queues();
+						task_system_set_mode(CONTROL);
+						p_task_system_dta->flag = false;
+						break;
+					}
+				}
+				read_task_memory(ID_24C256, CONFIG_MEM_ADRESS, &task_system_cfg, sizeof(task_system_cfg));
+				break;
+
 			default:
 
 				p_task_system_dta->tick  = DEL_SYS_MIN;
@@ -389,11 +411,6 @@ void system_statechart(task_system_dta_t *p_task_system_dta){
 
 				break;
 		}
-}
-
-
-void task_system_get_config(task_system_cfg_t *task_system_cfg){
-
 }
 
 

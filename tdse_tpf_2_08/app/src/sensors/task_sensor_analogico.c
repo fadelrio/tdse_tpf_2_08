@@ -168,7 +168,7 @@ void task_sensor_analogico_update(void *parameters)
 void task_sensor_analogico_statechart(void)
 {
 	uint32_t index;
-	const task_sensor_analogico_cfg_t *p_task_sensor_cfg; //TODO en algun momento hay que usarlo
+	const task_sensor_analogico_cfg_t *p_task_sensor_cfg;
 	task_sensor_analogico_dta_t *p_task_sensor_dta;
 
 	for (index = 0; SENSOR_DTA_QTY > index; index++)
