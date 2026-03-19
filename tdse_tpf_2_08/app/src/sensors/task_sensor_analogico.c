@@ -222,7 +222,7 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc){
 	task_sensor_analogico_dta_t *p_task_sensor_dta;
 	if(hadc->Instance == ADC1){
 		p_task_sensor_dta = &task_sensor_analogico_dta_list[ID_SENSOR_LUZ];
-	}else if(hadc->Instance == ADC1){
+	}else if(hadc->Instance == ADC2){
 		p_task_sensor_dta = &task_sensor_analogico_dta_list[ID_SENSOR_RIEGO];
 	}
 	p_task_sensor_dta->flag = true;

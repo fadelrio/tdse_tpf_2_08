@@ -61,7 +61,7 @@
 #define DEL_BTN_XX_MAX				50ul
 
 /********************** internal data declaration ****************************/
-const task_sensor_boton_cfg_t task_sensor_cfg_list[] = {
+const task_sensor_boton_cfg_t task_sensor_boton_cfg_list[] = {
 	{ID_BTN_ENTER,  BTN_ENTER_GPIO_Port,  BTN_ENTER_Pin,  BTN_A_PRESSED, DEL_BTN_XX_MAX,
 			EV_BTN_XX_UP,  ENTER, true, EV_SYS_NADA, false},
 	{ID_BTN_UP,  BTN_UP_GPIO_Port,  BTN_UP_Pin,  BTN_A_PRESSED, DEL_BTN_XX_MAX,
@@ -79,6 +79,11 @@ const task_sensor_boton_cfg_t task_sensor_cfg_list[] = {
 #define SENSOR_CFG_QTY	(sizeof(task_sensor_boton_cfg_list)/sizeof(task_sensor_boton_cfg_t))
 
 task_sensor_boton_dta_t task_sensor_boton_dta_list[] = {
+	{DEL_BTN_XX_MIN, ST_BTN_XX_UP, EV_BTN_XX_UP},
+	{DEL_BTN_XX_MIN, ST_BTN_XX_UP, EV_BTN_XX_UP},
+	{DEL_BTN_XX_MIN, ST_BTN_XX_UP, EV_BTN_XX_UP},
+	{DEL_BTN_XX_MIN, ST_BTN_XX_UP, EV_BTN_XX_UP},
+	{DEL_BTN_XX_MIN, ST_BTN_XX_UP, EV_BTN_XX_UP},
 	{DEL_BTN_XX_MIN, ST_BTN_XX_UP, EV_BTN_XX_UP}
 };
 
@@ -190,7 +195,7 @@ void task_sensor_statechart(void)
 	for (index = 0; SENSOR_DTA_QTY > index; index++)
 	{
 		/* Update Task Sensor Configuration & Data Pointer */
-		p_task_sensor_cfg = &task_sensor_cfg_list[index];
+		p_task_sensor_cfg = &task_sensor_boton_cfg_list[index];
 		p_task_sensor_dta = &task_sensor_boton_dta_list[index];
 
 		if (p_task_sensor_cfg->pressed == HAL_GPIO_ReadPin(p_task_sensor_cfg->gpio_port, p_task_sensor_cfg->pin))

@@ -4,6 +4,7 @@
 #include "logger.h"
 #include "dwt.h"
 
+#include "app.h"
 #include "system/task_system_attribute.h"
 #include "control/control_riego_attribute.h"
 #include "control/control_riego_interface.h"

@@ -141,7 +141,7 @@ void task_system_init(void *parameters)
 	p_task_system_dta = &task_system_dta;
 
 	/* Init & Print out: Task execution FSM */
-	state = ST_SYS_CONTROL;
+	state = ST_SYS_MEM_ACQUIRE;
 	p_task_system_dta->state = state;
 
 	event = EV_SYS_NADA;
@@ -162,6 +162,11 @@ void task_system_init(void *parameters)
 	init_control_riego_statechart();
 	init_menu_statechart();
 	displayInit(DISPLAY_CONNECTION_GPIO_4BITS);
+
+	displayCharPositionWrite(0,0);
+	displayStringWrite("                ");
+	displayCharPositionWrite(0,1);
+	displayStringWrite("     CONTROL    ");
 }
 
 void task_system_update(void *parameters)
@@ -187,6 +192,12 @@ void task_system_update(void *parameters)
 		switch (g_task_system_mode)
 		{
 			case MEM_ACQUIRE:
+
+				if (true == any_event_task_system())
+					{
+						task_system_dta.flag = true;
+						task_system_dta.event = get_event_task_system();
+					}
 
 				system_statechart(&task_system_dta);
 
@@ -235,10 +246,19 @@ void task_system_update(void *parameters)
 
 void task_system_control_statechart(void)
 {
+
+#ifdef CONTROL_TEMPERATURA
 	update_control_temperatura_statechart(task_system_cfg);
+#endif
+#ifdef CONTROL_HUMEDAD
 	update_control_humedad_statechart(task_system_cfg);
+#endif
+#ifdef CONTROL_RIEGO
 	update_control_riego_statechart(task_system_cfg);
+#endif
+#ifdef CONTROL_LUZ
 	update_control_luz_statechart(task_system_cfg);
+#endif
 
 	task_system_dta_t *p_task_system_dta;
 
@@ -347,6 +367,7 @@ void disable_all_queues(){
 
 
 void system_statechart(task_system_dta_t *p_task_system_dta){
+
 	switch (p_task_system_dta->state)
 		{
 			case ST_SYS_CONTROL:
@@ -355,6 +376,7 @@ void system_statechart(task_system_dta_t *p_task_system_dta){
 						task_system_disable_control_queues();
 						task_system_enable_menu_queues();
 						task_system_set_mode(MENU);
+						set_up_menu_display();
 						p_task_system_dta->state = ST_SYS_MENU;
 						p_task_system_dta->flag = false;
 
@@ -376,6 +398,10 @@ void system_statechart(task_system_dta_t *p_task_system_dta){
 						if (write_task_memory(ID_24C256, CONFIG_MEM_ADRESS, &task_system_cfg, sizeof(task_system_cfg))){
 							p_task_system_dta->state = ST_SYS_CONTROL;
 							p_task_system_dta->flag = false;
+							displayCharPositionWrite(0,0);
+							displayStringWrite("                ");
+							displayCharPositionWrite(0,1);
+							displayStringWrite("     CONTROL    ");
 						}
 					}else if(p_task_system_dta->event == EV_SYS_ERROR){
 						disable_all_queues();
@@ -395,6 +421,7 @@ void system_statechart(task_system_dta_t *p_task_system_dta){
 					if (p_task_system_dta->event == EV_SYS_MEM_READ_READY){
 						task_system_enable_control_queues();
 						task_system_set_mode(CONTROL);
+						p_task_system_dta->state = ST_SYS_CONTROL;
 						p_task_system_dta->flag = false;
 						break;
 					}

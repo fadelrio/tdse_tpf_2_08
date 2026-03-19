@@ -196,6 +196,7 @@ void task_memory_statechart(void)
 					}
 					p_task_memory_dta->flag = false;
 				}
+				break;
 
 			case ST_MEMORY_BUSY:
 				if(p_task_memory_dta->tick == 0){
@@ -203,6 +204,7 @@ void task_memory_statechart(void)
 				}else {
 					p_task_memory_dta->tick--;
 				}
+				break;
 
 			case ST_MEMORY_READING:
 				if(HAL_I2C_GetState(p_task_memory_cfg->i2c_handler) == HAL_I2C_STATE_READY){
@@ -215,6 +217,7 @@ void task_memory_statechart(void)
 						p_task_memory_dta->event = EV_MEMORY_READ;
 					}
 				}
+				break;
 
 			case ST_MEMORY_WRITING:
 				if(HAL_I2C_GetState(p_task_memory_cfg->i2c_handler) == HAL_I2C_STATE_READY){
@@ -228,6 +231,7 @@ void task_memory_statechart(void)
 
 					}
 				}
+				break;
 
 
 			default:

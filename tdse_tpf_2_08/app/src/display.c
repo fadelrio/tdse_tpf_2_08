@@ -227,7 +227,7 @@ void displayStringWrite( const char * str )
 {
     while (*str) {
     	displayCodeWrite(DISPLAY_RS_DATA, *str++);
-    }
+    }//TODO implementar proteccion de recurso compartido
 }
 
 //=====[Implementations of private functions]==================================

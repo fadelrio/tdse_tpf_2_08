@@ -62,6 +62,10 @@ void Error_Handler(void);
 #define B1_Pin GPIO_PIN_13
 #define B1_GPIO_Port GPIOC
 #define B1_EXTI_IRQn EXTI15_10_IRQn
+#define D9_Pin GPIO_PIN_2
+#define D9_GPIO_Port GPIOC
+#define D8_Pin GPIO_PIN_3
+#define D8_GPIO_Port GPIOC
 #define USART_TX_Pin GPIO_PIN_2
 #define USART_TX_GPIO_Port GPIOA
 #define USART_RX_Pin GPIO_PIN_3
@@ -78,8 +82,6 @@ void Error_Handler(void);
 #define OUTPUT_VENTILADOR_GPIO_Port GPIOB
 #define OUTPUT_CALENTADOR_Pin GPIO_PIN_2
 #define OUTPUT_CALENTADOR_GPIO_Port GPIOB
-#define D9_Pin GPIO_PIN_12
-#define D9_GPIO_Port GPIOB
 #define D5_Pin GPIO_PIN_6
 #define D5_GPIO_Port GPIOC
 #define BTN_NEXT_Pin GPIO_PIN_7
@@ -92,8 +94,6 @@ void Error_Handler(void);
 #define BTN_ESCAPE_GPIO_Port GPIOA
 #define BTN_UP_Pin GPIO_PIN_10
 #define BTN_UP_GPIO_Port GPIOA
-#define D8_Pin GPIO_PIN_11
-#define D8_GPIO_Port GPIOA
 #define D7_Pin GPIO_PIN_12
 #define D7_GPIO_Port GPIOA
 #define TMS_Pin GPIO_PIN_13
