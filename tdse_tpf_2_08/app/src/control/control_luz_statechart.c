@@ -11,6 +11,8 @@
 #include "system/task_system_interface.h"
 #include "sensors/task_sensor_analogico_attribute.h"
 #include "sensors/task_sensor_analogico_interface.h"
+#include "actuators/task_actuator_analogico_attribute.h"
+#include "actuators/task_actuator_analogico_interface.h"
 /********************** macros ***********************************************/
 
 #define G_TASK_SYS_CNT_INI			0ul
@@ -48,7 +50,6 @@ void update_control_luz_statechart(const task_system_cfg_t p_task_system_cfg){
 		p_control_luz_dta->flag = true;
 		p_control_luz_dta->event = get_event_control_luz();
 	}
-	//TODO CHEQUEAR STATECHART!!!!!!
 
 	switch (p_control_luz_dta->state)
 	{
@@ -99,8 +100,8 @@ void update_control_luz_statechart(const task_system_cfg_t p_task_system_cfg){
 		case BAJAR_LUZ:
 				if(p_control_luz_dta->estado_led > 0){
 					p_control_luz_dta->state = CHECK_LUZ;
-
 					p_control_luz_dta->estado_led-= DELTA_CAMBIO_LUZ;
+					pwm_on_task_actuador_analogico(ID_PWM_LED, p_control_luz_dta->estado_led);
 				}else if(p_control_luz_dta->estado_led == 0){
 					p_control_luz_dta->state = IDLE_LUZ;
 				}
@@ -110,7 +111,10 @@ void update_control_luz_statechart(const task_system_cfg_t p_task_system_cfg){
 		case SUBIR_LUZ:
 				p_control_luz_dta->state = ILUMINAR;
 				p_control_luz_dta->flag = false;
-				p_control_luz_dta->estado_led += DELTA_CAMBIO_LUZ;
+				if(p_control_luz_dta->estado_led+DELTA_CAMBIO_LUZ < 0xFFFF){
+					p_control_luz_dta->estado_led += DELTA_CAMBIO_LUZ;
+					pwm_on_task_actuador_analogico(ID_PWM_LED, p_control_luz_dta->estado_led);
+				}
 				break;
 			}
 

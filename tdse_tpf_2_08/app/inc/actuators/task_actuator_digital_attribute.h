@@ -94,21 +94,21 @@ extern "C" {
  * 	------------------------+-----------------------+-----------------------+-----------------------+------------------------ */
 
 /* Events to excite Task Actuator */
-typedef enum task_actuator_digital_ev {EV_LED_XX_OFF,
-							   EV_LED_XX_ON,
+typedef enum task_actuator_digital_ev {EV_DIG_XX_OFF,
+							   EV_DIG_XX_ON,
 							   EV_LED_XX_NOT_BLINK,
 							   EV_LED_XX_BLINK,
 							   EV_LED_XX_PULSE} task_actuator_digital_ev_t;
 
 /* States of Task Actuator */
-typedef enum task_actuator_digital_st {ST_LED_XX_OFF,
-							   ST_LED_XX_ON,
+typedef enum task_actuator_digital_st {ST_DIG_XX_OFF,
+							   ST_DIG_XX_ON,
 							   ST_LED_XX_BLINK_ON,
 							   ST_LED_XX_BLINK_OFF,
 							   ST_LED_XX_PULSE} task_actuator_digital_st_t;
 
 /* Identifier of Task Actuator */
-typedef enum task_actuator_digital_id {ID_OUTPUT_RIEGO,ID_OUTPUT_VENTILADOR,ID_OUTPUT_HUMIFICADOR,ID_OUTPUT_CALENTADOR} task_actuator_digital_id_t;
+typedef enum task_actuator_digital_id {ID_OUTPUT_RIEGO,ID_OUTPUT_VENTILADOR,ID_OUTPUT_HUMIDIFICADOR,ID_OUTPUT_CALENTADOR} task_actuator_digital_id_t;
 
 typedef struct
 {

@@ -1,0 +1,30 @@
+!SESSION 2026-02-18 15:47:55.488 -----------------------------------------------
+eclipse.buildId=Version 1.17.0
+java.version=21.0.3
+java.vendor=Eclipse Adoptium
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=es_AR
+Command-line arguments:  -os win32 -ws win32 -arch x86_64
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 4 4 2026-02-18 15:48:54.339
+!MESSAGE CubeMX plugin appears to be active, Log4j initialization might be too late.
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 1 1 2026-02-18 15:48:54.341
+!MESSAGE Log4j2 initialized with config file C:\Users\marti\Documents\Ing electronica\1c2025\Embebidos_final\tsde_tpf\tdse_tpf_2_08\tdse_tpf_2_08\.metadata\.log4j2.xml
+
+!ENTRY com.st.stm32cube.ide.mcu.ide 1 1 2026-02-18 15:48:59.556
+!MESSAGE Started RMI Server, listening on port 41337
+!SESSION 2026-02-18 15:51:53.970 -----------------------------------------------
+eclipse.buildId=Version 1.17.0
+java.version=21.0.3
+java.vendor=Eclipse Adoptium
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=es_AR
+Command-line arguments:  -os win32 -ws win32 -arch x86_64
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 4 4 2026-02-18 15:52:01.239
+!MESSAGE CubeMX plugin appears to be active, Log4j initialization might be too late.
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 1 1 2026-02-18 15:52:01.240
+!MESSAGE Log4j2 initialized with config file C:\Users\marti\Documents\Ing electronica\1c2025\Embebidos_final\tsde_tpf\tdse_tpf_2_08\tdse_tpf_2_08\.metadata\.log4j2.xml
+
+!ENTRY com.st.stm32cube.ide.mcu.ide 1 1 2026-02-18 15:52:04.233
+!MESSAGE Started RMI Server, listening on port 41337

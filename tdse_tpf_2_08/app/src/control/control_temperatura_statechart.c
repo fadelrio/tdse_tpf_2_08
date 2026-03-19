@@ -11,6 +11,8 @@
 #include "sensors/task_sensor_digital_attribute.h"
 #include "sensors/task_sensor_digital_interface.h"
 #include "system/task_system_interface.h"
+#include "actuators/task_actuator_digital_attribute.h"
+#include "actuators/task_actuator_digital_interface.h"
 /********************** macros ***********************************************/
 
 #define G_TASK_SYS_CNT_INI			0ul
@@ -90,13 +92,15 @@ void update_control_temperatura_statechart(const task_system_cfg_t p_task_system
 		if (p_control_temperatura_dta->flag ){
 				if(p_control_temperatura_dta->event == ENTRY){
 					p_control_temperatura_dta->state = ENFRIAR;
-					//enfriador_on();TODO
+					put_event_task_actuator_digital(EV_DIG_XX_OFF,ID_OUTPUT_CALENTADOR);
+					put_event_task_actuator_digital(EV_DIG_XX_ON,ID_OUTPUT_VENTILADOR);
 
 				}else if (p_control_temperatura_dta->event == TICK){
 					if (p_control_temperatura_dta->tick == 0u){
 						p_control_temperatura_dta->state = SENSE_FRIO;
 						put_event_task_sensor_digital(EV_START_MEASUREMENT_DIGITAL);
-						//enfriador_off();TODO
+						put_event_task_actuator_digital(EV_DIG_XX_OFF,ID_OUTPUT_CALENTADOR);
+						put_event_task_actuator_digital(EV_DIG_XX_OFF,ID_OUTPUT_VENTILADOR);
 					}else if (p_control_temperatura_dta->tick>0){
 						p_control_temperatura_dta->state = ENFRIAR;
 						p_control_temperatura_dta->tick--;
@@ -132,13 +136,16 @@ void update_control_temperatura_statechart(const task_system_cfg_t p_task_system
 		if (p_control_temperatura_dta->flag){
 			if( p_control_temperatura_dta->event == ENTRY){
 					p_control_temperatura_dta->state = CALENTAR;
-					//calentador_on();TODO
+					put_event_task_actuator_digital(EV_DIG_XX_OFF,ID_OUTPUT_VENTILADOR);
+					put_event_task_actuator_digital(EV_DIG_XX_ON,ID_OUTPUT_CALENTADOR);
+
 					p_control_temperatura_dta->flag= false;
 			}else if (p_control_temperatura_dta->event == TICK){
 				if(p_control_temperatura_dta->tick == 0u){
 					p_control_temperatura_dta->state = SENSE_CALOR;
 					put_event_task_sensor_digital(EV_START_MEASUREMENT_DIGITAL);
-					//calentador_off();TODO
+					put_event_task_actuator_digital(EV_DIG_XX_OFF,ID_OUTPUT_CALENTADOR);
+					put_event_task_actuator_digital(EV_DIG_XX_OFF,ID_OUTPUT_VENTILADOR);
 				}else if (p_control_temperatura_dta->tick > 0u){
 					p_control_temperatura_dta->state = CALENTAR;
 					p_control_temperatura_dta->tick--;

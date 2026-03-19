@@ -61,14 +61,14 @@
 const task_actuator_digital_cfg_t task_actuator_digital_cfg_list[] = {
 	{ID_OUTPUT_RIEGO, OUTPUT_RIEGO_GPIO_Port ,  OUTPUT_RIEGO_Pin, LED_A_ON,  LED_A_OFF},
 	{ID_OUTPUT_VENTILADOR,OUTPUT_VENTILADOR_GPIO_Port,OUTPUT_VENTILADOR_Pin,LED_A_ON,LED_A_OFF},
-	{ID_OUTPUT_HUMIFICADOR,  OUTPUT_HUMIFICADOR_GPIO_Port,  OUTPUT_HUMIFICADOR_Pin, LED_A_ON,  LED_A_OFF},
+	{ID_OUTPUT_HUMIDIFICADOR,  OUTPUT_HUMIDIFICADOR_GPIO_Port,  OUTPUT_HUMIDIFICADOR_Pin, LED_A_ON,  LED_A_OFF},
 	{ID_OUTPUT_CALENTADOR,  OUTPUT_CALENTADOR_GPIO_Port,  OUTPUT_CALENTADOR_Pin, LED_A_ON,  LED_A_OFF}
 };
 
 #define ACTUATOR_CFG_QTY	(sizeof(task_actuator_digital_cfg_list)/sizeof(task_actuator_digital_cfg_t))
 
 task_actuator_digital_dta_t task_actuator_digital_dta_list[] = {
-	{DEL_ACT_XX_MIN, ST_LED_XX_OFF, EV_LED_XX_NOT_BLINK, false}
+	{DEL_ACT_XX_MIN, ST_DIG_XX_OFF, EV_DIG_XX_OFF, false}
 };
 
 #define ACTUATOR_DTA_QTY	(sizeof(task_actuator_digital_dta_list)/sizeof(task_actuator_digital_dta_t))
@@ -110,10 +110,10 @@ void task_actuator_digital_init(void *parameters)
 		p_task_actuator_dta = &task_actuator_digital_dta_list[index];
 
 		/* Init & Print out: Index & Task execution FSM */
-		state = ST_LED_XX_OFF;
+		state = ST_DIG_XX_OFF;
 		p_task_actuator_dta->state = state;
 
-		event = EV_LED_XX_OFF;
+		event = EV_DIG_XX_OFF;
 		p_task_actuator_dta->event = event;
 
 		b_event = false;
@@ -182,24 +182,24 @@ void task_actuator_digital_statechart(void)
 
 		switch (p_task_actuator_dta->state)
 		{
-			case ST_LED_XX_OFF:
+			case ST_DIG_XX_OFF:
 
-				if ((true == p_task_actuator_dta->flag) && (EV_LED_XX_ON == p_task_actuator_dta->event))
+				if ((true == p_task_actuator_dta->flag) && (EV_DIG_XX_ON == p_task_actuator_dta->event))
 				{
 					p_task_actuator_dta->flag = false;
 					HAL_GPIO_WritePin(p_task_actuator_cfg->gpio_port, p_task_actuator_cfg->pin, p_task_actuator_cfg->led_on);
-					p_task_actuator_dta->state = ST_LED_XX_ON;
+					p_task_actuator_dta->state = ST_DIG_XX_ON;
 				}
 
 				break;
 
-			case ST_LED_XX_ON:
+			case ST_DIG_XX_ON:
 
-				if ((true == p_task_actuator_dta->flag) && (EV_LED_XX_OFF == p_task_actuator_dta->event))
+				if ((true == p_task_actuator_dta->flag) && (EV_DIG_XX_OFF == p_task_actuator_dta->event))
 				{
 					p_task_actuator_dta->flag = false;
 					HAL_GPIO_WritePin(p_task_actuator_cfg->gpio_port, p_task_actuator_cfg->pin, p_task_actuator_cfg->led_off);
-					p_task_actuator_dta->state = ST_LED_XX_OFF;
+					p_task_actuator_dta->state = ST_DIG_XX_OFF;
 				}
 
 				break;
@@ -207,8 +207,8 @@ void task_actuator_digital_statechart(void)
 			default:
 
 				p_task_actuator_dta->tick  = DEL_ACT_XX_MIN;
-				p_task_actuator_dta->state = ST_LED_XX_OFF;
-				p_task_actuator_dta->event = EV_LED_XX_OFF;
+				p_task_actuator_dta->state = ST_DIG_XX_OFF;
+				p_task_actuator_dta->event = EV_DIG_XX_OFF;
 				p_task_actuator_dta->flag = false;
 
 				break;

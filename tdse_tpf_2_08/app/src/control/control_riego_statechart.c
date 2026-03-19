@@ -11,6 +11,8 @@
 #include "system/task_system_interface.h"
 #include "sensors/task_sensor_analogico_attribute.h"
 #include "sensors/task_sensor_analogico_interface.h"
+#include "actuators/task_actuator_digital_attribute.h"
+#include "actuators/task_actuator_digital_interface.h"
 /********************** macros ***********************************************/
 
 #define G_TASK_SYS_CNT_INI			0ul
@@ -68,7 +70,7 @@ void update_control_riego_statechart(const task_system_cfg_t p_task_system_cfg){
 				p_control_riego_dta->riego = get_riego_task_sensor_analogico();
 				if(p_control_riego_dta->riego < p_task_system_cfg.r_0 - DELTA_RIEGO) {
 					p_control_riego_dta->tick = TIMER_CAMB_RIEGO;
-					//regador_on(); // todo
+					put_event_task_actuator_digital(EV_DIG_XX_ON, ID_OUTPUT_RIEGO);
 					p_control_riego_dta->state = REGAR_RIEGO;
 				} else { //Riego > R_0
 					p_control_riego_dta->tick = TIMER_RIEGO;
@@ -83,7 +85,7 @@ void update_control_riego_statechart(const task_system_cfg_t p_task_system_cfg){
 				p_control_riego_dta->tick--;
 			} else { //timer == 0
 				start_riego_measurement_task_sensor_analogico();
-				//regador_off(); //todo
+				put_event_task_actuator_digital(EV_DIG_XX_OFF, ID_OUTPUT_RIEGO);
 				p_control_riego_dta->state = SENSE_RIEGO;
 			}
 			p_control_riego_dta->flag = false;
@@ -95,7 +97,7 @@ void update_control_riego_statechart(const task_system_cfg_t p_task_system_cfg){
 				p_control_riego_dta->riego = get_riego_task_sensor_analogico();
 				if(p_control_riego_dta->riego < p_task_system_cfg.r_0 - DELTA_RIEGO) {
 					p_control_riego_dta->tick = TIMER_CAMB_RIEGO;
-					//regador_on(); //todo
+					put_event_task_actuator_digital(EV_DIG_XX_ON, ID_OUTPUT_RIEGO);
 					p_control_riego_dta->state = REGAR_RIEGO;
 #ifndef TEST_0
 					check_error_riego();
