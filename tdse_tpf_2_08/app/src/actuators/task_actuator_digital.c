@@ -68,6 +68,9 @@ const task_actuator_digital_cfg_t task_actuator_digital_cfg_list[] = {
 #define ACTUATOR_CFG_QTY	(sizeof(task_actuator_digital_cfg_list)/sizeof(task_actuator_digital_cfg_t))
 
 task_actuator_digital_dta_t task_actuator_digital_dta_list[] = {
+	{DEL_ACT_XX_MIN, ST_DIG_XX_OFF, EV_DIG_XX_OFF, false},
+	{DEL_ACT_XX_MIN, ST_DIG_XX_OFF, EV_DIG_XX_OFF, false},
+	{DEL_ACT_XX_MIN, ST_DIG_XX_OFF, EV_DIG_XX_OFF, false},
 	{DEL_ACT_XX_MIN, ST_DIG_XX_OFF, EV_DIG_XX_OFF, false}
 };
 
@@ -101,6 +104,7 @@ void task_actuator_digital_init(void *parameters)
 
 	/* Init & Print out: Task execution counter */
 	g_task_actuator_digital_cnt = G_TASK_ACT_CNT_INIT;
+	g_task_actuator_digital_tick_cnt = G_TASK_ACT_CNT_INIT;
 	LOGGER_INFO("   %s = %lu", GET_NAME(g_task_actuator_digital_cnt), g_task_actuator_digital_cnt);
 
 	for (index = 0; ACTUATOR_DTA_QTY > index; index++)

@@ -37,7 +37,7 @@ void start_luz_measurement_task_sensor_analogico(void){
 uint32_t get_riego_task_sensor_analogico(void){
 	task_sensor_analogico_dta_t *p_task_sensor_dta;
 	p_task_sensor_dta = &task_sensor_analogico_dta_list[ID_SENSOR_RIEGO];
-	return p_task_sensor_dta->measure;
+	return 4096 - p_task_sensor_dta->measure;
 }
 uint32_t get_luz_task_sensor_analogico(void){
 	task_sensor_analogico_dta_t *p_task_sensor_dta;

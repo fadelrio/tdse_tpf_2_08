@@ -110,6 +110,9 @@ void update_control_humedad_statechart(const task_system_cfg_t p_task_system_cfg
 #ifndef TEST_0
 				check_error_sec();
 #endif
+			}else {
+				p_control_humedad_dta->state = IDLE_HUM;
+				p_control_humedad_dta->tick = TIMER_HUMEDAD;
 			}
 			p_control_humedad_dta->flag = false;
 			}
@@ -140,6 +143,9 @@ void update_control_humedad_statechart(const task_system_cfg_t p_task_system_cfg
 #ifndef TEST_0
 				check_error_hum();
 #endif
+				}else {
+					p_control_humedad_dta->state = IDLE_HUM;
+					p_control_humedad_dta->tick = TIMER_HUMEDAD;
 				}
 			p_control_humedad_dta->flag = false;
 			}

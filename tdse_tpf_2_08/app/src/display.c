@@ -230,6 +230,12 @@ void displayStringWrite( const char * str )
     }//TODO implementar proteccion de recurso compartido
 }
 
+// Caster de funcion privada para que tomo un solo parámetro;
+
+void displayCharWrite(char c){
+	displayCodeWrite(DISPLAY_RS_DATA, c);
+}
+
 //=====[Implementations of private functions]==================================
 static void displayCodeWrite( bool type, uint8_t dataBus )
 {

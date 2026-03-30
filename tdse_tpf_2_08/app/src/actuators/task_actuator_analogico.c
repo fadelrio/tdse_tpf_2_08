@@ -107,6 +107,7 @@ void task_actuator_analogico_init(void *parameters)
 
 	/* Init & Print out: Task execution counter */
 	g_task_actuator_analogico_cnt = G_TASK_ACT_CNT_INIT;
+	g_task_actuator_analogico_tick_cnt = G_TASK_ACT_CNT_INIT;
 	LOGGER_INFO("   %s = %lu", GET_NAME(g_task_actuator_analogico_cnt), g_task_actuator_analogico_cnt);
 
 	for (index = 0; ACTUATOR_DTA_QTY > index; index++)

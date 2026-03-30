@@ -132,6 +132,7 @@ void task_sensor_digital_init(void *parameters)
 
 	/* Init & Print out: Task execution counter */
 	g_task_sensor_digital_cnt = G_TASK_SEN_CNT_INIT;
+	g_task_sensor_digital_tick_cnt = G_TASK_SEN_CNT_INIT;
 	LOGGER_INFO("   %s = %lu", GET_NAME(g_task_sensor_digital_cnt), g_task_sensor_digital_cnt);
 
 	for (index = 0; SENSOR_DTA_QTY > index; index++)

@@ -20,6 +20,8 @@ typedef struct {
 
 //=====[Declarations (prototypes) of public functions]=========================
 
+void displayCharWrite(char c);
+
 void displayInit( displayConnection_t connection );
 
 void displayCharPositionWrite( uint8_t charPositionX, uint8_t charPositionY );

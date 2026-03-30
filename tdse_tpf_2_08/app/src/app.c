@@ -48,9 +48,11 @@
 #include "system/task_system.h"
 #include "sensors/task_sensor_digital.h"
 #include "sensors/task_sensor_analogico.h"
+#include <actuators/task_actuator_analogico.h>
 #include <actuators/task_actuator_digital.h>
 #include "sensors/task_sensor_boton.h"
 #include "memory/task_memory.h"
+#include "display/task_display.h"
 
 /********************** macros and definitions *******************************/
 #define G_APP_CNT_INI		0ul
@@ -78,7 +80,9 @@ const task_cfg_t task_cfg_list[]	= {
 		{task_system_init, 		task_system_update, 	NULL},
 		{task_actuator_digital_init,	task_actuator_digital_update, 	NULL},
 		{task_sensor_boton_init, task_sensor_boton_update, NULL},
-		{task_memory_init, task_memory_update, NULL}
+		{task_memory_init, task_memory_update, NULL},
+		{task_actuator_analogico_init, task_actuator_analogico_update, NULL},
+		{task_display_init, task_display_update, NULL}
 };
 
 #define TASK_QTY	(sizeof(task_cfg_list)/sizeof(task_cfg_t))
@@ -206,6 +210,8 @@ void HAL_SYSTICK_Callback(void)
 	g_task_actuator_digital_tick_cnt++;
 	g_task_sensor_boton_tick_cnt++;
 	g_task_memory_tick_cnt++;
+	g_task_actuator_analogico_tick_cnt++;
+	g_task_display_tick_cnt++;
 }
 
 /********************** end of file ******************************************/

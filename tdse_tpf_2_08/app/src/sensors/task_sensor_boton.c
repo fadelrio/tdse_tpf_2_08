@@ -115,6 +115,7 @@ void task_sensor_boton_init(void *parameters)
 
 	/* Init & Print out: Task execution counter */
 	g_task_sensor_boton_cnt = G_TASK_SEN_CNT_INIT;
+	g_task_sensor_boton_tick_cnt = G_TASK_SEN_CNT_INIT;
 	LOGGER_INFO("   %s = %lu", GET_NAME(g_task_sensor_boton_cnt), g_task_sensor_boton_cnt);
 
 	for (index = 0; SENSOR_DTA_QTY > index; index++)
@@ -150,7 +151,6 @@ void task_sensor_boton_update(void *parameters)
     	b_time_update_required = true;
     }
     __asm("CPSIE i");	/* enable interrupts */
-
     while (b_time_update_required)
     {
 		/* Update Task Counter */
@@ -206,6 +206,7 @@ void task_sensor_statechart(void)
 		{
 			p_task_sensor_dta->event =	EV_BTN_XX_UP;
 		}
+
 
 		switch (p_task_sensor_dta->state)
 		{
