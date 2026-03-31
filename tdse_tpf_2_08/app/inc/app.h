@@ -48,14 +48,14 @@ extern "C" {
 /********************** macros ***********************************************/
 
 
-//#define TEST_0 (0)
+#define TEST_0 (0)
 #define TEST_1 (1)
 #define TEST_2 (2)
 
-//#define CONTROL_LUZ 3
+#define CONTROL_LUZ 3
 #define CONTROL_RIEGO 4
-//#define CONTROL_TEMPERATURA 5
-//#define CONTROL_HUMEDAD 6
+#define CONTROL_TEMPERATURA 5
+#define CONTROL_HUMEDAD 6
 
 #define TEST_X (TEST_0)
 

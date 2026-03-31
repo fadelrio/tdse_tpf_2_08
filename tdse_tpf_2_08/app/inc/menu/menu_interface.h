@@ -21,6 +21,7 @@ extern menu_ev_t get_event_menu(void);
 extern bool any_event_menu(void);
 extern void enable_queue_menu(void);
 extern void disable_queue_menu(void);
+extern void setup_menu(void);
 
 
 /********************** End of CPP guard *************************************/

@@ -95,4 +95,11 @@ void disable_queue_menu(void){
 	queue_menu.enable = false;
 }
 
+void setup_menu(void){
+	menu_dta.event = 0;
+	menu_dta.state = TEMPERATURA_SELECT;
+	menu_dta.event = NEXT;
+	menu_dta.flag = false;
+}
+
 /********************** end of file ******************************************/

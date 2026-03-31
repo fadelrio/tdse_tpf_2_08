@@ -379,6 +379,7 @@ void system_statechart(task_system_dta_t *p_task_system_dta){
 						task_system_enable_menu_queues();
 						task_system_set_mode(MENU);
 						set_up_menu_display();
+						setup_menu();
 						p_task_system_dta->state = ST_SYS_MENU;
 						p_task_system_dta->flag = false;
 
