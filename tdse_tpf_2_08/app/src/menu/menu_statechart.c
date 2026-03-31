@@ -20,9 +20,9 @@
 #define RIEGO_MIN					0
 #define DELTA_RIEGO					41
 
-#define LUZ_MAX						4095
+#define LUZ_MAX						1000
 #define LUZ_MIN						0
-#define DELTA_LUZ					41
+#define DELTA_LUZ					LUZ_MAX/100
 
 #define TEMP_MAX					40
 #define TEMP_MIN					25
@@ -39,6 +39,7 @@ menu_dta_t menu_dta = {DEL_SYS_MIN, TEMPERATURA_SELECT, NEXT, false};
 int countDigits(int n);
 void displayWriteValue(int n);
 int int12bits_a_porcentaje(uint32_t i);
+int mapear_luz(uint32_t i);
 
 
 void init_menu_statechart(){
@@ -109,7 +110,7 @@ void update_menu_statechart(task_system_cfg_t *p_task_system_cfg){
 				}else if(p_menu_dta->event == ENTER){
 					p_menu_dta->state = LUZ_MENU;
 					print_string_task_display("      LUZ      ", 0);
-					displayWriteValue(int12bits_a_porcentaje(p_task_system_cfg->l_0));
+					displayWriteValue(mapear_luz(p_task_system_cfg->l_0));
 				}
 				p_menu_dta->flag = false;
 			}
@@ -123,11 +124,11 @@ void update_menu_statechart(task_system_cfg_t *p_task_system_cfg){
 				}else if(p_menu_dta->event == UP && p_task_system_cfg->l_0 < LUZ_MAX){
 					p_task_system_cfg->l_0+=DELTA_LUZ;
 					print_string_task_display("      LUZ      ", 0);
-					displayWriteValue(int12bits_a_porcentaje(p_task_system_cfg->l_0));
+					displayWriteValue(mapear_luz(p_task_system_cfg->l_0));
 				}else if(p_menu_dta->event == DOWN && p_task_system_cfg->l_0 > LUZ_MIN){
 					p_task_system_cfg->l_0 -=DELTA_LUZ;
 					print_string_task_display("      LUZ      ", 0);
-					displayWriteValue(int12bits_a_porcentaje(p_task_system_cfg->l_0));
+					displayWriteValue(mapear_luz(p_task_system_cfg->l_0));
 				}
 				p_menu_dta->flag = false;
 			}
@@ -234,4 +235,9 @@ void displayWriteValue(int n){
 
 int int12bits_a_porcentaje(uint32_t i){
 	return i*100/4096;
+}
+
+
+int mapear_luz(uint32_t i){
+	return i*100/LUZ_MAX;
 }

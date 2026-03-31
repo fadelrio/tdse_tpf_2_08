@@ -297,19 +297,24 @@ void task_system_error_statechart(void)
 
 	switch (get_system_error()){
 		case TEMPERATURA:
-			//implimir en display que se rompio la temp
+			print_string_task_display("      ERROR     ", 0);
+			print_string_task_display("   TEMPERATURA  ", 1);
 			break;
 		case HUMEDAD:
-			//implimir en display que se rompio la hum
+			print_string_task_display("      ERROR     ", 0);
+			print_string_task_display("     HUMEDAD    ", 1);
 			break;
 		case LUZ:
-			//implimir en display que se rompio la loz
+			print_string_task_display("      ERROR     ", 0);
+			print_string_task_display("       LUZ      ", 1);
 			break;
 		case RIEGO:
-			//implimir en display que se rompio la awa
+			print_string_task_display("      ERROR     ", 0);
+			print_string_task_display("      RIEGO     ", 1);
 			break;
 		case NADA:
-			//implimir en display que se rompio la no tenemos puta idea
+			print_string_task_display("      ERROR     ", 0);
+			print_string_task_display("      NADA      ", 1);
 			break;
 		default:
 			//implimir en display que se rompio la tenemos menos idea todavia

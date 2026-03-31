@@ -118,14 +118,16 @@ void update_control_riego_statechart(const task_system_cfg_t p_task_system_cfg){
 void check_error_riego(){
 	//asumimos que el comportamiento esperado es creciente
 	control_riego_dta_t *p_control_riego_dta = &control_riego_dta;
-	if ((p_control_riego_dta->riego - p_control_riego_dta->riego_ant) > 0 + DELTA_RIEGO){
+	if ((p_control_riego_dta->riego - p_control_riego_dta->riego_ant)*(p_control_riego_dta->riego - p_control_riego_dta->riego_ant) > 0 + DELTA_RIEGO*DELTA_RIEGO){
 		p_control_riego_dta->error_cnt = 0;
 		return;
 	}else{
 		p_control_riego_dta->error_cnt++;
-		if (p_control_riego_dta->error_cnt == CONTROL_RIEGO_ERROR_CNT_MAX){
-			put_event_task_system(EV_SYS_ERROR);
-		}
-		return;
 	}
+	if (p_control_riego_dta->error_cnt == CONTROL_RIEGO_ERROR_CNT_MAX){
+		put_event_task_system(EV_SYS_ERROR);
+		put_system_error(RIEGO);
+	}
+		return;
 }
+

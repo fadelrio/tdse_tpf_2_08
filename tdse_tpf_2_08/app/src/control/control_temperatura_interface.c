@@ -92,6 +92,8 @@ void disable_queue_control_temperatura(void){
 		queue_control_temperatura.count = 0;
 
 	}
+	control_temperatura_dta.state = IDLE_TEMP;
+	control_temperatura_dta.tick = 0;
 	queue_control_temperatura.enable = false;
 }
 

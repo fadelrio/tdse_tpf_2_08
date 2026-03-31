@@ -72,7 +72,7 @@ void update_control_humedad_statechart(const task_system_cfg_t p_task_system_cfg
 				if (p_control_humedad_dta->humedad > p_task_system_cfg.h_0 + DELTA_HUM){
 					p_control_humedad_dta->state = SECAR;
 					p_control_humedad_dta->tick = TIMER_CAMB_HUM;
-					put_event_task_actuator_digital(EV_DIG_XX_OFF, ID_OUTPUT_HUMIDIFICADOR);
+					put_event_task_actuator_digital(EV_DIG_XX_OFF, ID_OUTPUT_VENTILADOR);
 				}else if (p_control_humedad_dta->humedad < p_task_system_cfg.h_0 - DELTA_HUM){
 					p_control_humedad_dta->state = HUMEDECER;
 					p_control_humedad_dta->tick = TIMER_CAMB_HUM;
@@ -88,7 +88,7 @@ void update_control_humedad_statechart(const task_system_cfg_t p_task_system_cfg
 			if (p_control_humedad_dta->tick == 0){
 				p_control_humedad_dta->state = SENSE_SEC;
 				put_event_task_sensor_digital(EV_START_MEASUREMENT_DIGITAL);
-				put_event_task_actuator_digital(EV_DIG_XX_ON, ID_OUTPUT_HUMIDIFICADOR);
+				put_event_task_actuator_digital(EV_DIG_XX_ON, ID_OUTPUT_VENTILADOR);
 			}else{
 				p_control_humedad_dta->tick--;
 			}
@@ -100,7 +100,7 @@ void update_control_humedad_statechart(const task_system_cfg_t p_task_system_cfg
 			if (p_control_humedad_dta->humedad > p_task_system_cfg.h_0 + DELTA_HUM){
 				p_control_humedad_dta->state = SECAR;
 				p_control_humedad_dta->tick = TIMER_CAMB_HUM;
-				put_event_task_actuator_digital(EV_DIG_XX_OFF, ID_OUTPUT_HUMIDIFICADOR);
+				put_event_task_actuator_digital(EV_DIG_XX_OFF, ID_OUTPUT_VENTILADOR);
 #ifndef TEST_0
 				check_error_sec();
 #endif
@@ -164,6 +164,7 @@ void check_error_hum(){
 		p_control_humedad_dta->error_cnt++;
 		if (p_control_humedad_dta->error_cnt == CONTROL_HUMEDAD_ERROR_CNT_MAX){
 			put_event_task_system(EV_SYS_ERROR);
+			put_system_error(HUMEDAD);
 		}
 		return;
 	}
@@ -179,6 +180,7 @@ void check_error_sec(){
 		p_control_humedad_dta->error_cnt++;
 		if (p_control_humedad_dta->error_cnt == CONTROL_HUMEDAD_ERROR_CNT_MAX){
 			put_event_task_system(EV_SYS_ERROR);
+			put_system_error(HUMEDAD);
 		}
 		return;
 	}

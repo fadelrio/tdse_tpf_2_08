@@ -92,6 +92,8 @@ void disable_queue_control_riego(void){
 		queue_control_riego.count = 0;
 
 	}
+	control_riego_dta.state = IDLE_RIEGO;
+	control_riego_dta.tick = 0;
 	queue_control_riego.enable = false;
 }
 

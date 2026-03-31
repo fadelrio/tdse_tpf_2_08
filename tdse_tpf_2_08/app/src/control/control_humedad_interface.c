@@ -92,6 +92,8 @@ void disable_queue_control_humedad(void){
 		queue_control_humedad.count = 0;
 
 	}
+	control_humedad_dta.state = IDLE_HUM;
+	control_humedad_dta.tick = 0;
 	queue_control_humedad.enable = false;
 }
 

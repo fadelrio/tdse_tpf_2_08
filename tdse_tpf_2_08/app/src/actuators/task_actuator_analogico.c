@@ -201,6 +201,8 @@ void task_actuator_analogico_statechart(void)
 					if(p_task_actuator_dta->event == EV_ACT_ANALOGICO_PWM_OFF){
 						p_task_actuator_dta->state = ST_ACT_ANALOGICO_OFF;
 						setPWM(p_task_actuator_cfg->handler, p_task_actuator_cfg->channel, p_task_actuator_cfg->period, p_task_actuator_dta->pulse);
+					}else{
+						setPWM(p_task_actuator_cfg->handler, p_task_actuator_cfg->channel, p_task_actuator_cfg->period, p_task_actuator_dta->pulse);
 					}
 					p_task_actuator_dta->flag = false;
 				}

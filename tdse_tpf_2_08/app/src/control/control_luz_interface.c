@@ -92,6 +92,8 @@ void disable_queue_control_luz(void){
 		queue_control_luz.count = 0;
 
 	}
+	control_luz_dta.state = IDLE_LUZ;
+	control_luz_dta.tick = 0;
 	queue_control_luz.enable = false;
 }
 

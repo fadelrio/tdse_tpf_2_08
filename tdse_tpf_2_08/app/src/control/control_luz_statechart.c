@@ -23,8 +23,10 @@
 #define DEL_SYS_MAX					500ul
 
 #define VALOR_MAX_LED				0xFFFF //impuesto por el PWM
-#define DELTA_LUZ					40
+#define DELTA_LUZ					1000/100
 #define DELTA_CAMBIO_LUZ			6553
+
+#define TIMER_CAMB_LUZ				1000
 /********************** typedef **********************************************/
 
 control_luz_dta_t control_luz_dta = {DEL_SYS_MIN, IDLE_LUZ, NADA_LUZ, false};
@@ -54,7 +56,7 @@ void update_control_luz_statechart(const task_system_cfg_t p_task_system_cfg){
 	switch (p_control_luz_dta->state)
 	{
 		case IDLE_LUZ:
-			if(p_control_luz_dta->tick > 0){ //el tick es un evento? por lo q pusimos si pero no es algo q pasa
+			if(p_control_luz_dta->tick > 0){
 				p_control_luz_dta->tick--;
 				p_control_luz_dta->flag = false;
 			}else if(p_control_luz_dta->tick == 0){
@@ -74,6 +76,7 @@ void update_control_luz_statechart(const task_system_cfg_t p_task_system_cfg){
 					p_control_luz_dta->flag = false;
 				}else{
 					p_control_luz_dta->state = IDLE_LUZ;
+					p_control_luz_dta->tick = TIMER_CAMB_LUZ;
 					p_control_luz_dta->flag = false;
 				}
 			}
@@ -87,6 +90,7 @@ void update_control_luz_statechart(const task_system_cfg_t p_task_system_cfg){
 #endif
 				}else if(p_control_luz_dta->estado_led > 0xFFFF - DELTA_LUZ){
 					p_control_luz_dta->state = IDLE_LUZ;
+					p_control_luz_dta->tick = TIMER_CAMB_LUZ;
 #ifndef TEST_0
 
 					check_error_luz();
@@ -100,12 +104,14 @@ void update_control_luz_statechart(const task_system_cfg_t p_task_system_cfg){
 		case BAJAR_LUZ:
 				if(p_control_luz_dta->estado_led > 0){
 					p_control_luz_dta->state = CHECK_LUZ;
+					start_luz_measurement_task_sensor_analogico();
 					p_control_luz_dta->estado_led-= DELTA_CAMBIO_LUZ;
 					pwm_on_task_actuador_analogico(ID_PWM_LED, p_control_luz_dta->estado_led);
 				}else if(p_control_luz_dta->estado_led == 0){
 					p_control_luz_dta->state = IDLE_LUZ;
+					p_control_luz_dta->tick = TIMER_CAMB_LUZ;
+					pwm_off_task_actuador_analogico(ID_PWM_LED);
 				}
-				p_control_luz_dta->flag = false;
 				break;
 
 		case SUBIR_LUZ:
@@ -124,6 +130,7 @@ void check_error_luz(){
 	control_luz_dta_t *p_control_luz_dta = &control_luz_dta;
 	if (p_control_luz_dta->luz < DELTA_LUZ && p_control_luz_dta->estado_led > 0xFFFF - DELTA_LUZ){
 			put_event_task_system(EV_SYS_ERROR);
+			put_system_error(LUZ);
 		return;
 	}
 }

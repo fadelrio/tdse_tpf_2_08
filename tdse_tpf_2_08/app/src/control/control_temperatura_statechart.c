@@ -61,54 +61,46 @@ void update_control_temperatura_statechart(const task_system_cfg_t p_task_system
 					p_control_temperatura_dta->state = CHECK_TEMP;
 					put_event_task_sensor_digital(EV_START_MEASUREMENT_DIGITAL);
 				}
-		if (p_control_temperatura_dta->flag && (p_control_temperatura_dta->event == TICK)){
-			if (p_control_temperatura_dta->tick > 0u){
-						p_control_temperatura_dta->tick--;
-					}
-					p_control_temperatura_dta->state = NADA_TEMP;
+
+		if (p_control_temperatura_dta->tick > 0u){
+					p_control_temperatura_dta->tick--;
 				}
-		p_control_temperatura_dta->flag = false;
+			}
 		break;
-	}
+
 	case CHECK_TEMP:{
 		if (p_control_temperatura_dta->flag && (p_control_temperatura_dta->event == SENSE_TEMP_READY)){
 			p_control_temperatura_dta->temperatura_ant = p_control_temperatura_dta->temperatura;
 			p_control_temperatura_dta->temperatura = get_temperature_measure();
 			if (p_control_temperatura_dta->temperatura > p_task_system_cfg.t_0 + DELTA){
 				p_control_temperatura_dta->state = ENFRIAR;
+				put_event_task_actuator_digital(EV_DIG_XX_OFF,ID_OUTPUT_CALENTADOR);
+				put_event_task_actuator_digital(EV_DIG_XX_ON,ID_OUTPUT_VENTILADOR);
 				p_control_temperatura_dta->tick = TIMER_CAMB_TEMP;
 			}else if(p_control_temperatura_dta->temperatura < p_task_system_cfg.t_0 - DELTA){
 				p_control_temperatura_dta->state = CALENTAR;
+				put_event_task_actuator_digital(EV_DIG_XX_OFF,ID_OUTPUT_VENTILADOR);
+				put_event_task_actuator_digital(EV_DIG_XX_ON,ID_OUTPUT_CALENTADOR);
 				p_control_temperatura_dta->tick =TIMER_CAMB_TEMP;
 			}else{
 				p_control_temperatura_dta->state = NADA_TEMP;
 				p_control_temperatura_dta->tick = TIMER_TEMP;
 			}
+
+			p_control_temperatura_dta->flag = false;
 		}
-		p_control_temperatura_dta->flag = false;
 		break;
 	}
 	case ENFRIAR:{
-		if (p_control_temperatura_dta->flag ){
-				if(p_control_temperatura_dta->event == ENTRY){
-					p_control_temperatura_dta->state = ENFRIAR;
-					put_event_task_actuator_digital(EV_DIG_XX_OFF,ID_OUTPUT_CALENTADOR);
-					put_event_task_actuator_digital(EV_DIG_XX_ON,ID_OUTPUT_VENTILADOR);
-
-				}else if (p_control_temperatura_dta->event == TICK){
-					if (p_control_temperatura_dta->tick == 0u){
-						p_control_temperatura_dta->state = SENSE_FRIO;
-						put_event_task_sensor_digital(EV_START_MEASUREMENT_DIGITAL);
-						put_event_task_actuator_digital(EV_DIG_XX_OFF,ID_OUTPUT_CALENTADOR);
-						put_event_task_actuator_digital(EV_DIG_XX_OFF,ID_OUTPUT_VENTILADOR);
-					}else if (p_control_temperatura_dta->tick>0){
-						p_control_temperatura_dta->state = ENFRIAR;
-						p_control_temperatura_dta->tick--;
-					}
-
-				}
+		if (p_control_temperatura_dta->tick == 0u){
+			p_control_temperatura_dta->state = SENSE_FRIO;
+			put_event_task_sensor_digital(EV_START_MEASUREMENT_DIGITAL);
+			put_event_task_actuator_digital(EV_DIG_XX_OFF,ID_OUTPUT_CALENTADOR);
+			put_event_task_actuator_digital(EV_DIG_XX_OFF,ID_OUTPUT_VENTILADOR);
+		}else if (p_control_temperatura_dta->tick>0){
+			p_control_temperatura_dta->state = ENFRIAR;
+			p_control_temperatura_dta->tick--;
 		}
-		p_control_temperatura_dta->flag = false;
 		break;
 	}
 	case SENSE_FRIO:{
@@ -123,39 +115,32 @@ void update_control_temperatura_statechart(const task_system_cfg_t p_task_system
 #endif
 			}else if(p_control_temperatura_dta->temperatura > p_task_system_cfg.t_0 + DELTA){
 				p_control_temperatura_dta->state = ENFRIAR;
+				put_event_task_actuator_digital(EV_DIG_XX_OFF,ID_OUTPUT_CALENTADOR);
+				put_event_task_actuator_digital(EV_DIG_XX_ON,ID_OUTPUT_VENTILADOR);
 				p_control_temperatura_dta->tick = TIMER_CAMB_TEMP;
 #ifndef TEST_0
 					check_error_frio();
 #endif
 			}
+			p_control_temperatura_dta->flag= false;
 		}
-		p_control_temperatura_dta->flag= false;
 		break;
 	}
 	case CALENTAR:{
-		if (p_control_temperatura_dta->flag){
-			if( p_control_temperatura_dta->event == ENTRY){
-					p_control_temperatura_dta->state = CALENTAR;
-					put_event_task_actuator_digital(EV_DIG_XX_OFF,ID_OUTPUT_VENTILADOR);
-					put_event_task_actuator_digital(EV_DIG_XX_ON,ID_OUTPUT_CALENTADOR);
+		if(p_control_temperatura_dta->tick == 0u){
+			p_control_temperatura_dta->state = SENSE_CALOR;
+			put_event_task_sensor_digital(EV_START_MEASUREMENT_DIGITAL);
+			put_event_task_actuator_digital(EV_DIG_XX_OFF,ID_OUTPUT_CALENTADOR);
+			put_event_task_actuator_digital(EV_DIG_XX_OFF,ID_OUTPUT_VENTILADOR);
+		}else if (p_control_temperatura_dta->tick > 0u){
+			p_control_temperatura_dta->state = CALENTAR;
+			p_control_temperatura_dta->tick--;
 
-					p_control_temperatura_dta->flag= false;
-			}else if (p_control_temperatura_dta->event == TICK){
-				if(p_control_temperatura_dta->tick == 0u){
-					p_control_temperatura_dta->state = SENSE_CALOR;
-					put_event_task_sensor_digital(EV_START_MEASUREMENT_DIGITAL);
-					put_event_task_actuator_digital(EV_DIG_XX_OFF,ID_OUTPUT_CALENTADOR);
-					put_event_task_actuator_digital(EV_DIG_XX_OFF,ID_OUTPUT_VENTILADOR);
-				}else if (p_control_temperatura_dta->tick > 0u){
-					p_control_temperatura_dta->state = CALENTAR;
-					p_control_temperatura_dta->tick--;
-
-					}
-				}
 			}
-		p_control_temperatura_dta->flag= false;
 		break;
-		}
+
+	}
+
 	case SENSE_CALOR:
 	{
 		if(p_control_temperatura_dta->flag){
@@ -170,14 +155,16 @@ void update_control_temperatura_statechart(const task_system_cfg_t p_task_system
 #endif
 					}else if(p_control_temperatura_dta->temperatura < p_task_system_cfg.t_0 - DELTA){
 					p_control_temperatura_dta->state = CALENTAR;
+					put_event_task_actuator_digital(EV_DIG_XX_OFF,ID_OUTPUT_VENTILADOR);
+					put_event_task_actuator_digital(EV_DIG_XX_ON,ID_OUTPUT_CALENTADOR);
 					p_control_temperatura_dta->tick = TIMER_CAMB_TEMP;
 #ifndef TEST_0
 					check_error_calor();
 #endif
 				}
 			}
+			p_control_temperatura_dta->flag= false;
 		}
-		p_control_temperatura_dta->flag= false;
 		break;
 	}
 	default:{
@@ -197,6 +184,7 @@ void check_error_calor(){
 		p_control_temperatura_dta->error_cnt++;
 		if (p_control_temperatura_dta->error_cnt == CONTROL_TEMPERATURA_ERROR_CNT_MAX){
 			put_event_task_system(EV_SYS_ERROR);
+			put_system_error(TEMPERATURA);
 		}
 		return;
 	}
@@ -212,6 +200,7 @@ void check_error_frio(){
 		p_control_temperatura_dta->error_cnt++;
 		if (p_control_temperatura_dta->error_cnt == CONTROL_TEMPERATURA_ERROR_CNT_MAX){
 			put_event_task_system(EV_SYS_ERROR);
+			put_system_error(TEMPERATURA);
 		}
 		return;
 	}
